@@ -22,8 +22,8 @@
 #the packages you need are below, unhashtag the sentance below to install packages 
 #hit cmd + enter to run this code or highlight it and click run in the top right corner
 
-#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2",
-#                  "epitools", "readxl", "tidyverse","arsenal")))
+#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2","epitools", "readxl", "tidyverse","arsenal"))
+#install.packages(c("ggthemes"))
 
 #now we need to load all the packages into our r script, this is done with the
 #function, library(). For instance, if we want to load the package "boot", we would
@@ -32,7 +32,7 @@ library(boot)
 library(MASS)
 library(plyr)
 library(dplyr)
-library(plot2)
+library(ggplot2)
 library(tibble)
 library(car)
 library(reshape2)
@@ -137,7 +137,8 @@ Area25_C <- cbind(FWRA$LF_ID,Area25_C)
 Area25_F <- Area25 %>% dplyr:: select(ends_with("_F"))
 Area25_F <- cbind(FWRA$LF_ID,Area25_F)
 
-Area26 <- FWRA %>% select(Kaouk_C:Artlish_F)
+view(FWRA)
+Area26 <- FWRA %>% dplyr:: select(Kaouk_C:Artlish_F)
 Area26 <- cbind(FWRA$LF_ID,Area26)
 Area26_C <- Area26 %>% dplyr:: select(ends_with("_C"))
 Area26_C <- cbind(FWRA$LF_ID,Area26_C)
@@ -145,7 +146,7 @@ Area26_F <- Area26 %>% dplyr:: select(ends_with("_F"))
 Area26_F <- cbind(FWRA$LF_ID,Area26_F)
 
 
-
+require(dplyr)
 #Converting to Counts in the same order
 
 Area23_C_Sums <- Area23_C %>% select(ends_with("_C")) %>%
