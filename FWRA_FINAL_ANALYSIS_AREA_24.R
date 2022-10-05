@@ -226,13 +226,14 @@ ggplot(Area24_combo, aes(x=Time, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure2",".jpeg"),
+pdf(NULL)
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure2",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
+dev.off() 
 #Combined Current + Future
 Area24_combo<- Area24_combo %>%                               # Specify data frame
   group_by(Rating) %>%                         # Specify group indicator
@@ -272,13 +273,14 @@ ggplot(longData, aes(x = Consequence, y = Likelihood, fill = value)) +
         axis.title.y = element_text(color = "grey20", size = 20, face = "plain"))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure1",".jpeg"),
+pdf(NULL)
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure1",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
+dev.off() 
 ##########Terminal Migration Current (1-15)######
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 1 & `FWRA$LF_ID` <= 15)
 VL <- c("Very Low")
@@ -401,14 +403,17 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
+library(tidyverse)
+
+pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure8_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures//", "Figure8",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
+dev.off() 
 
 #############Incubation (16-29)#####
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 16 & `FWRA$LF_ID` <= 29)
@@ -532,14 +537,15 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
+pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure8",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure9",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
+dev.off() 
 ###############Freshwater Rearing (30-46)##############
 ###Freshwater Rearing Current
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 30 & `FWRA$LF_ID` <= 46)
@@ -582,30 +588,6 @@ Area24_Terminal_C <- tidyr::pivot_longer(Area24_Terminal_C, cols=c("Very Low","L
                                          values_to="Proportion")
 colnames(Area24_Terminal_C)
 Area24_Terminal_C$Rating <- factor(Area24_Terminal_C$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
-
-
-
-ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Freshwater Rearing - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(29, 47),breaks=seq(30,46,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure10_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 Area24_EarlyRearingRiver_CVL <- subset(Area24_Terminal_C, Rating == "Very Low")
 Area24_EarlyRearingRiver_CL <- subset(Area24_Terminal_C, Rating == "Low")
@@ -658,30 +640,6 @@ Area24_Terminal_F <- tidyr::pivot_longer(Area24_Terminal_F, cols=c("Very Low","L
 colnames(Area24_Terminal_F)
 Area24_Terminal_F$Rating <- factor(Area24_Terminal_F$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Freshwater Rearing - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(29, 47),breaks=seq(30,46,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure10_F",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
-
-
 Area24_EarlyRearingRiver_FVL <- subset(Area24_Terminal_F, Rating == "Very Low")
 Area24_EarlyRearingRiver_FL <- subset(Area24_Terminal_F, Rating == "Low")
 Area24_EarlyRearingRiver_FM <- subset(Area24_Terminal_F, Rating == "Moderate")
@@ -689,20 +647,37 @@ Area24_EarlyRearingRiver_FH <- subset(Area24_Terminal_F, Rating == "High")
 Area24_EarlyRearingRiver_FVH <- subset(Area24_Terminal_F, Rating == "Very High")
 Area24_EarlyRearingRiver_FHPDG <- subset(Area24_Terminal_F, Rating == "High Priority Data Gap")
 Area24_EarlyRearingRiver_FLPDG <- subset(Area24_Terminal_F, Rating == "Low Priority Data Gap")
-Area24_Terminal_C <- Area24_Terminal_C %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
 
-Area24_Terminal_F <- Area24_Terminal_F %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+###Combine C+F into one graph ---  here goes nothing
+Area24_Terminal_C$Time <- rep("C", length(Area24_Terminal_C$LimitingFactor))
 
-library(dplyr)
+Area24_Terminal_F$Time <- rep("F", length(Area24_Terminal_F$LimitingFactor))
 
-Area24_Terminal_C %>%
-  mutate(prop = prop.table(Frequency))
-Area24_Terminal_F %>%
-  mutate(prop = prop.table(Frequency))
+Area24_Terminal_F <- rbind(Area24_Terminal_C,Area24_Terminal_F)
+
+ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ LimitingFactor)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  ggtitle("Area 24 - Freshwater Rearing")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
+
+pdf(NULL)
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure10",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
+dev.off() 
+
 
 ################ Estuary Rearing (47-66)#########
 # Estuary Rearing Current
@@ -746,30 +721,6 @@ Area24_Terminal_C <- tidyr::pivot_longer(Area24_Terminal_C, cols=c("Very Low","L
                                          values_to="Proportion")
 colnames(Area24_Terminal_C)
 Area24_Terminal_C$Rating <- factor(Area24_Terminal_C$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
-
-
-
-ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Estuary Rearing - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(46, 67),breaks=seq(47,66,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure11_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 
 Area24_EarlyRearingEstuary_CVL <- subset(Area24_Terminal_C, Rating == "Very Low")
@@ -823,27 +774,6 @@ Area24_Terminal_F <- tidyr::pivot_longer(Area24_Terminal_F, cols=c("Very Low","L
 colnames(Area24_Terminal_F)
 Area24_Terminal_F$Rating <- factor(Area24_Terminal_F$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Estuary Rearing - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(46, 67),breaks=seq(47,66,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure11_F",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 Area24_EarlyRearingEstuary_FVL <- subset(Area24_Terminal_F, Rating == "Very Low")
 Area24_EarlyRearingEstuary_FL <- subset(Area24_Terminal_F, Rating == "Low")
@@ -853,23 +783,40 @@ Area24_EarlyRearingEstuary_FVH <- subset(Area24_Terminal_F, Rating == "Very High
 Area24_EarlyRearingEstuary_FHPDG <- subset(Area24_Terminal_F, Rating == "High Priority Data Gap")
 Area24_EarlyRearingEstuary_FLPDG <- subset(Area24_Terminal_F, Rating == "Low Priority Data Gap")
 
-Area24_Terminal_C <- Area24_Terminal_C %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
 
-Area24_Terminal_F <- Area24_Terminal_F %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+###Combine C+F into one graph ---  here goes nothing
+Area24_Terminal_C$Time <- rep("C", length(Area24_Terminal_C$LimitingFactor))
 
-library(dplyr)
+Area24_Terminal_F$Time <- rep("F", length(Area24_Terminal_F$LimitingFactor))
 
-Area24_Terminal_C %>%
-  mutate(prop = prop.table(Frequency))
-Area24_Terminal_F %>%
-  mutate(prop = prop.table(Frequency))
+Area24_Terminal_F <- rbind(Area24_Terminal_C,Area24_Terminal_F)
+
+ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ LimitingFactor)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  ggtitle("Area 24 - Estuary Rearing")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
+
+pdf(NULL)
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure11",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
+dev.off() 
 
 
-##############Biological Characteristics & Genetics(67-70)#########
+
+##############Biological Characteristics(67-70)#########
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 67 & `FWRA$LF_ID` <= 70)
 VL <- c("Very Low")
 Area24_Terminal_C <- Area24_Terminal_C %>% 
@@ -912,30 +859,6 @@ colnames(Area24_Terminal_C)
 Area24_Terminal_C$Rating <- factor(Area24_Terminal_C$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
 
-
-ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Biological Characteristics & Genetics - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(66, 71),breaks=seq(67,70,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure12_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
-
 Area24_BiologicalCharacteristicsGenetics_CVL <- subset(Area24_Terminal_C, Rating == "Very Low")
 Area24_BiologicalCharacteristicsGenetics_CL <- subset(Area24_Terminal_C, Rating == "Low")
 Area24_BiologicalCharacteristicsGenetics_CM <- subset(Area24_Terminal_C, Rating == "Moderate")
@@ -945,7 +868,7 @@ Area24_BiologicalCharacteristicsGenetics_CHPDG <- subset(Area24_Terminal_C, Rati
 Area24_BiologicalCharacteristicsGenetics_CLPDG <- subset(Area24_Terminal_C, Rating == "Low Priority Data Gap")
 
 
-#Biological Characteristics & Genetics - Future Rating
+#Biological Characteristics - Future Rating
 Area24_Terminal_F <- Area24_F %>% filter(`FWRA$LF_ID` >= 67 & `FWRA$LF_ID` <= 70)
 VL <- c("Very Low")
 Area24_Terminal_F <- Area24_Terminal_F %>% 
@@ -987,28 +910,6 @@ Area24_Terminal_F <- tidyr::pivot_longer(Area24_Terminal_F, cols=c("Very Low","L
 colnames(Area24_Terminal_F)
 Area24_Terminal_F$Rating <- factor(Area24_Terminal_F$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Biological Characteristics & Genetics - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(66, 71),breaks=seq(67,70,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure12_F",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
 
 Area24_BiologicalCharacteristicsGenetics_FVL <- subset(Area24_Terminal_F, Rating == "Very Low")
 Area24_BiologicalCharacteristicsGenetics_FL <- subset(Area24_Terminal_F, Rating == "Low")
@@ -1018,20 +919,35 @@ Area24_BiologicalCharacteristicsGenetics_FVH <- subset(Area24_Terminal_F, Rating
 Area24_BiologicalCharacteristicsGenetics_FHPDG <- subset(Area24_Terminal_F, Rating == "High Priority Data Gap")
 Area24_BiologicalCharacteristicsGenetics_FLPDG <- subset(Area24_Terminal_F, Rating == "Low Priority Data Gap")
 
-Area24_Terminal_C <- Area24_Terminal_C %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+###Combine C+F into one graph ---  here goes nothing
+Area24_Terminal_C$Time <- rep("C", length(Area24_Terminal_C$LimitingFactor))
 
-Area24_Terminal_F <- Area24_Terminal_F %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+Area24_Terminal_F$Time <- rep("F", length(Area24_Terminal_F$LimitingFactor))
 
-library(dplyr)
+Area24_Terminal_F <- rbind(Area24_Terminal_C,Area24_Terminal_F)
 
-Area24_Terminal_C %>%
-  mutate(prop = prop.table(Frequency))
-Area24_Terminal_F %>%
-  mutate(prop = prop.table(Frequency))
+ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ LimitingFactor)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  ggtitle("Area 24 - Biological Characteristics")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
+
+pdf(NULL)
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure12",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
+dev.off() 
 
 
 ##########Ratings Current Stacked Bar########
@@ -1048,7 +964,7 @@ Upper_C<- Upper_C %>% mutate(Group =
                                between(LimitingFactor,16,29) ~ "Incubation",
                                between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                               between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                               between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 Upper_C_Final <- Upper_C %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1062,20 +978,6 @@ Upper_C_Sums <- Upper_C_Final %>%                               # Specify data f
 Upper_C_Final$Denominator <- c(53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90)
 Upper_C_Final$Proportion <- Upper_C_Final$newcount/Upper_C_Final$Denominator
 
-ggplot(Upper_C_Final, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings Grouped by Lifestage - Current")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 90)","Incubation\n (n = 50)","Freshwater\nRearing \n (n = 62)","Estuary\nRearing\n (n = 53)","Biological \n Characteristics & \n Genetics\n (n = 12)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,100), breaks=seq(0,100,10))
-"53,62,12,50,90"
 
 ##########Ratings Future Stacked Bar########
 VeryLow_All_F <- rbind(Area24_Terminal_FVL,Area24_Incubation_FVL,Area24_EarlyRearingRiver_FVL,Area24_EarlyRearingEstuary_FVL,Area24_BiologicalCharacteristicsGenetics_FVL)
@@ -1093,7 +995,7 @@ Upper_F<- Upper_F %>% mutate(Group =
                                          between(LimitingFactor,16,29) ~ "Incubation",
                                          between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                          between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                         between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 Upper_F_Final <- Upper_F %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1105,22 +1007,40 @@ Upper_F_Sums<- Upper_F_Final %>%                               # Specify data fr
 
 Upper_F_Final$Denominator <- c(53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90)
 
-Upper_F_Final$Proportion <- Upper_F_Final$newcount/Upper_F_Final$Denominator
-ggplot(Upper_F_Final, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
+###Combine C+F into one graph ---  here goes nothing
+Upper_C_Final$Time <- rep("C", length(Upper_C_Final$Rating))
+
+Upper_F_Final$Time <- rep("F", length(Upper_F_Final$Rating))
+
+Upper<- rbind(Upper_C_Final,Upper_F_Final)
+
+unique(Upper$Group)
+
+Upper$Group <- factor(Upper$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
+
+pdf(NULL)
+library(ggplot2)
+
+ggplot(Upper, aes(x=Time, y=newcount, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
+  labs(x = "Rating Period", y = "Count") +
   theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings Grouped by Lifestage - Future")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 90)","Incubation\n (n = 50)","Freshwater\nRearing \n (n = 62)","Estuary\nRearing\n (n = 53)","Biological \n Characteristics & \n Genetics\n (n = 12)"))+
+  ggtitle("Area 24 - Count of Ratings Grouped by Lifestage")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,100), breaks=seq(0,100,10))
-"53,62,12,50,90"
+  scale_y_continuous(limits = c(0,100), breaks=seq(0,100,25))
 
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Area 24 - Count of Ratings Grouped by Lifestage",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
+dev.off() 
 
 ##########All Current Stacked Bar########
 VeryLow_All_C <- rbind(Area24_Terminal_CVL,Area24_Incubation_CVL,Area24_EarlyRearingRiver_CVL,Area24_EarlyRearingEstuary_CVL,Area24_BiologicalCharacteristicsGenetics_CVL)
@@ -1139,7 +1059,7 @@ ALL_C<- ALL_C %>% mutate(Group =
                                      between(LimitingFactor,16,29) ~ "Incubation",
                                      between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                      between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                     between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                     between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 
@@ -1154,27 +1074,7 @@ ALL_C_Sums<- ALL_C %>%                               # Specify data frame
 ALL_C$Denominator <- c(200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150)
 
 ALL_C$Proportion <- ALL_C$newcount/ALL_C$Denominator
-ggplot(ALL_C, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings & Data Gaps Grouped by Lifestage - Current")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 150)","Incubation\n (n = 120)","Freshwater\nRearing \n (n = 170)","Estuary\nRearing\n (n = 200)","Biological \n Characteristics & \n Genetics\n (n = 40)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,200), breaks=seq(0,200,25))
 
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure3_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 ##########All Future Stacked Bar########
 VeryLow_All_F <- rbind(Area24_Terminal_FVL,Area24_Incubation_FVL,Area24_EarlyRearingRiver_FVL,Area24_EarlyRearingEstuary_FVL,Area24_BiologicalCharacteristicsGenetics_FVL)
@@ -1193,7 +1093,7 @@ ALL_F<- ALL_F %>% mutate(Group =
                                          between(LimitingFactor,16,29) ~ "Incubation",
                                          between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                          between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                         between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 ALL_F <- ALL_F %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1207,27 +1107,51 @@ ALL_F_Sums<- ALL_F %>%                               # Specify data frame
 ALL_F$Denominator <- c(200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150)
 
 ALL_F$Proportion <- ALL_F$newcount/ALL_F$Denominator
-ggplot(ALL_F, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
+
+###Combine C+F into one graph ---  here goes nothing
+ALL_C$Time <- rep("C", length(ALL_C$Rating))
+
+ALL_F$Time <- rep("F", length(ALL_F$Rating))
+
+ALL<- rbind(ALL_C,ALL_F)
+
+unique(ALL$Group)
+
+ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
+
+#Upper$Group <- revalue(Upper$Group , c("Terminal" = "Terminal Migration (n = )",
+                                       "Incubation" = "Incubation (n = 50)", 
+                                       "Freshwater Rearing" = "Freshwater Rearing (n = 53)",
+                                       "Estuary Rearing" = "Estuary Rearing (n = 62)", 
+                                       "Biological Characteristics" = "Biological Characteristics (n = 12)"))
+dev.off()
+pdf(NULL)
+library(ggplot2)
+
+ggplot(ALL, aes(x=Time, y=newcount, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
+  labs(x = "Rating Period", y = "Count") +
   theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings & Data Gaps Grouped by Lifestage - Future")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 150)","Incubation\n (n = 120)","Freshwater\nRearing \n (n = 170)","Estuary\nRearing\n (n = 200)","Biological \n Characteristics & \n Genetics\n (n = 40)"))+
+  ggtitle("Area 24 - Count of Ratings Grouped by Lifestage")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,200), breaks=seq(0,200,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure3_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 3",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
+dev.off() 
+
+
+
+
 ##########Upper Current Stacked Bar########
 Moderate_All_C <- rbind(Area24_Terminal_CM,Area24_Incubation_CM,Area24_EarlyRearingRiver_CM,Area24_EarlyRearingEstuary_CM,Area24_BiologicalCharacteristicsGenetics_CM)
 High_All_C <- rbind(Area24_Terminal_CH,Area24_Incubation_CH,Area24_EarlyRearingRiver_CH,Area24_EarlyRearingEstuary_CH,Area24_BiologicalCharacteristicsGenetics_CH)
@@ -1242,7 +1166,7 @@ Upper_C<- Upper_C %>% mutate(Group =
                                          between(LimitingFactor,16,29) ~ "Incubation",
                                          between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                          between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                         between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 Upper_C_Final <- Upper_C %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1257,27 +1181,6 @@ Upper_C_Sums<- Upper_C_Final %>%                               # Specify data fr
 Upper_C_Final$Denominator <- c(53,62,12,50,90,53,62,12,50,90,53,62,12,50,90)
 Upper_C_Final$Proportion <- Upper_C_Final$newcount/Upper_C_Final$Denominator
 
-ggplot(Upper_C_Final, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - High Risk LF's Grouped by Lifestage - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 90)","Incubation\n (n = 50)","Freshwater\nRearing \n (n = 62)","Estuary\nRearing\n (n = 53)","Biological \n Characteristics & \n Genetics\n (n = 12)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,30), breaks=seq(0,30,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure5_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 ##########Upper Future Stacked Bar########
 Moderate_All_F <- rbind(Area24_Terminal_FM,Area24_Incubation_FM,Area24_EarlyRearingRiver_FM,Area24_EarlyRearingEstuary_FM,Area24_BiologicalCharacteristicsGenetics_FM)
@@ -1291,31 +1194,51 @@ Upper_F<- Upper_F %>% mutate(Group =
                                          between(LimitingFactor,16,29) ~ "Incubation",
                                          between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                          between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                         between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 Upper_F_Final <- Upper_F %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
 
-ggplot(Upper_F_Final, aes(x=Group, y=newcount, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
+###Combine C+F into one graph ---  here goes nothing
+Upper_C$Time <- rep("C", length(Upper_C$Rating))
+
+Upper_F$Time <- rep("F", length(Upper_F$Rating))
+
+ALL<- rbind(Upper_C,Upper_F)
+
+unique(ALL$Group)
+
+ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
+
+#Upper$Group <- revalue(Upper$Group , c("Terminal" = "Terminal Migration (n = )",
+#"Incubation" = "Incubation (n = 50)", 
+#"Freshwater Rearing" = "Freshwater Rearing (n = 53)",
+#"Estuary Rearing" = "Estuary Rearing (n = 62)", 
+#"Biological Characteristics" = "Biological Characteristics (n = 12)"))
+pdf(NULL)
+library(ggplot2)
+
+ggplot(ALL, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
+  labs(x = "Rating Period", y = "Count") +
   theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - High Risk LF's Grouped by Lifestage - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 90)","Incubation\n (n = 50)","Freshwater\nRearing \n (n = 62)","Estuary\nRearing\n (n = 53)","Biological \n Characteristics & \n Genetics\n (n = 12)"))+
+  ggtitle("Area 24 - Count of Considerable Ratings Grouped by Lifestage")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,30), breaks=seq(0,30,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure5_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 5",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
+dev.off() 
+
+
 
 ##########DG Current & Future Stacked Bar########
 Low_DG_C <- rbind(Area24_Terminal_CLPDG,Area24_Incubation_CLPDG,Area24_EarlyRearingRiver_CLPDG,Area24_EarlyRearingEstuary_CLPDG,Area24_BiologicalCharacteristicsGenetics_CLPDG)
@@ -1337,7 +1260,7 @@ DG_CF<- DG_CF %>% mutate(Group =
                                          between(LimitingFactor,16,29) ~ "Incubation",
                                          between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                          between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                         between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 DG_CF <- DG_CF %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
 
@@ -1361,63 +1284,17 @@ ggplot(DG_CF, aes(x=Group, y=newcount, fill = Rating))+
         axis.text.y=element_text(color="black"))+
   ggtitle("Area 24 - Data Gaps Grouped by Lifestage - Current & Future")  +
   theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
+  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
   scale_fill_manual(values = c("Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,300), breaks=seq(0,500,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure6",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure6",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
-
-###########Proportional Life Stage Breakdown - Future All############
-VeryLow_All_F <- rbind(Area24_Terminal_FVL,Area24_Incubation_FVL,Area24_EarlyRearingRiver_FVL,Area24_EarlyRearingEstuary_FVL,Area24_BiologicalCharacteristicsGenetics_FVL)
-Low_All_F <- rbind(Area24_Terminal_FL,Area24_Incubation_FL,Area24_EarlyRearingRiver_FL,Area24_EarlyRearingEstuary_FL,Area24_BiologicalCharacteristicsGenetics_FL)
-Moderate_All_F <- rbind(Area24_Terminal_FM,Area24_Incubation_FM,Area24_EarlyRearingRiver_FM,Area24_EarlyRearingEstuary_FM,Area24_BiologicalCharacteristicsGenetics_FM)
-High_All_F <- rbind(Area24_Terminal_FH,Area24_Incubation_FH,Area24_EarlyRearingRiver_FH,Area24_EarlyRearingEstuary_FH,Area24_BiologicalCharacteristicsGenetics_FH)
-VeryHigh_All_F <- rbind(Area24_Terminal_FVH,Area24_Incubation_FVH,Area24_EarlyRearingRiver_FVH,Area24_EarlyRearingEstuary_FVH,Area24_BiologicalCharacteristicsGenetics_FVH)
-
-
-Upper_F<-rbind(VeryLow_All_F,Low_All_F,Moderate_All_F,High_All_F,VeryHigh_All_F)
-library(dplyr)
-
-Upper_F<- Upper_F %>% mutate(Group =
-                               case_when(between(LimitingFactor,1,15) ~ "Terminal", 
-                                         between(LimitingFactor,16,29) ~ "Incubation",
-                                         between(LimitingFactor,30,46) ~ "Freshwater Rearing",
-                                         between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                         between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
-library(dplyr)
-
-Upper_F_Final <- Upper_F %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
-
-
-Upper_F_Sums<- Upper_F_Final %>%                               # Specify data frame
-  group_by(Group) %>%                         # Specify group indicator
-  summarise_at(vars(newcount),              # Specify column
-               list(Denominator = sum))
-
-
-Upper_F_Final$Denominator <- c(53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90,53,62,12,50,90)
-Upper_F_Final$Proportion <- Upper_F_Final$newcount/Upper_F_Final$Denominator
-
-ggplot(Upper_F_Final, aes(x=Group, y=Proportion, fill = Rating, label = newcount))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Life Stage", y = "Percentage") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - LF's Grouped by Lifestage - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 90)","Incubation\n (n = 50)","Freshwater\nRearing \n (n = 62)","Estuary\nRearing\n (n = 53)","Biological \n Characteristics & \n Genetics\n (n = 12)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
 
 ######Proportional Data Gap Life Stage Breakdown - Current & Future All############
@@ -1435,17 +1312,17 @@ DG_CF<- DG_CF %>% mutate(Group =
                                    between(LimitingFactor,16,29) ~ "Incubation",
                                    between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                    between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                   between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                   between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 DG_CF <- DG_CF %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
-
+View(DG_CF)
 DG_CF_Sums<- DG_CF %>%                               # Specify data frame
   group_by(Group) %>%                         # Specify group indicator
   summarise_at(vars(newcount),              # Specify column
                list(Denominator = sum))
 
 
-DG_CF$Denominator <- c(294,216,56,140,120,294,216,56,140,120)
+DG_CF$Denominator <- c(56,294,216,140,120,56,294,216,140,120)
 DG_CF$Proportion <- DG_CF$newcount/DG_CF$Denominator
 
 
@@ -1459,11 +1336,11 @@ ggplot(DG_CF, aes(x=Group, y=Proportion, fill = Rating))+
         axis.text.y=element_text(color="black"))+
   ggtitle("Area 24 - Data Gaps Grouped by Lifestage - Current & Future")  +
   theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
+  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
   scale_fill_manual(values = c("Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure7",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure7",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1487,7 +1364,7 @@ ALL_C<- ALL_C %>% mutate(Group =
                                      between(LimitingFactor,16,29) ~ "Incubation",
                                      between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                      between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                     between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                     between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 ALL_C <- ALL_C %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1498,31 +1375,10 @@ ALL_C_Sums<- ALL_C %>%                               # Specify data frame
                list(Denominator = sum))
 
 
-ALL_C$Denominator <- c(200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150)
+ALL_C$Denominator <- c(40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150)
 
 ALL_C$Proportion <- ALL_C$newcount/ALL_C$Denominator
-ggplot(ALL_C, aes(x=Group, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Percentage") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings & Data Gaps Grouped by Lifestage - Current")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 150)","Incubation\n (n = 120)","Freshwater\nRearing \n (n = 170)","Estuary\nRearing\n (n = 200)","Biological \n Characteristics & \n Genetics\n (n = 40)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure4_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 ##########All Future Stacked Bar########
 VeryLow_All_F <- rbind(Area24_Terminal_FVL,Area24_Incubation_FVL,Area24_EarlyRearingRiver_FVL,Area24_EarlyRearingEstuary_FVL,Area24_BiologicalCharacteristicsGenetics_FVL)
 Low_All_F <- rbind(Area24_Terminal_FL,Area24_Incubation_FL,Area24_EarlyRearingRiver_FL,Area24_EarlyRearingEstuary_FL,Area24_BiologicalCharacteristicsGenetics_FL)
@@ -1540,7 +1396,7 @@ ALL_F<- ALL_F %>% mutate(Group =
                                      between(LimitingFactor,16,29) ~ "Incubation",
                                      between(LimitingFactor,30,46) ~ "Freshwater Rearing",
                                      between(LimitingFactor,47,66) ~ "Estuary Rearing", 
-                                     between(LimitingFactor,66,70) ~ "Biological Characteristics & Genetics"))
+                                     between(LimitingFactor,66,70) ~ "Biological Characteristics"))
 library(dplyr)
 
 ALL_F <- ALL_F %>% group_by(Rating,Group) %>% summarise(newcount=sum(Proportion)) 
@@ -1551,29 +1407,46 @@ ALL_F_Sums<- ALL_F %>%                               # Specify data frame
                list(Denominator = sum))
 
 
-ALL_F$Denominator <- c(200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150,200,170,40,120,150)
-
+ALL_F$Denominator <- c(40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150,40,200,170,120,150)
 ALL_F$Proportion <- ALL_F$newcount/ALL_F$Denominator
-ggplot(ALL_F, aes(x=Group, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Percentage") +
+
+
+###Combine C+F into one graph ---  here goes nothing
+ALL_C$Time <- rep("C", length(ALL_C$Rating))
+
+ALL_F$Time <- rep("F", length(ALL_F$Rating))
+
+ALL<- rbind(ALL_C,ALL_F)
+
+unique(ALL$Group)
+
+ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
+
+#Upper$Group <- revalue(Upper$Group , c("Terminal" = "Terminal Migration (n = )",
+#"Incubation" = "Incubation (n = 50)", 
+#"Freshwater Rearing" = "Freshwater Rearing (n = 53)",
+#"Estuary Rearing" = "Estuary Rearing (n = 62)", 
+#"Biological Characteristics" = "Biological Characteristics (n = 12)"))
+pdf(NULL)
+library(ggplot2)
+
+ggplot(ALL, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
+  labs(x = "Rating Period", y = "Percentage") +
   theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Ratings & Data Gaps Grouped by Lifestage - Future")  +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics & Genetics"), labels = c("Terminal\n Migration\n (n = 150)","Incubation\n (n = 120)","Freshwater\nRearing \n (n = 170)","Estuary\nRearing\n (n = 200)","Biological \n Characteristics & \n Genetics\n (n = 40)"))+
+  ggtitle("Area 24 - Proportion of Data Gaps and Risk Ratings Grouped by Lifestage")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure4_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 4",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
-
-
+dev.off() 
