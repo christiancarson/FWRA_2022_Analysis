@@ -42,7 +42,6 @@ library(tidyverse)
 library(readr)
 library(arsenal)
 source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
-#install.packages(c("ggplot2", "patchwork", "palmerpenguins"))
 library(tidyverse)
 library(patchwork)
 library(palmerpenguins)
@@ -60,7 +59,7 @@ library(viridis)
 #--------------any libraries needed are loaded and displayed below--------------
 #
 library(dplyr)
-library("zoo")
+library(zoo)
 #
 #--------------make project folders and folder paths----------------------------
 
@@ -137,7 +136,6 @@ Area25_C <- cbind(FWRA$LF_ID,Area25_C)
 Area25_F <- Area25 %>% dplyr:: select(ends_with("_F"))
 Area25_F <- cbind(FWRA$LF_ID,Area25_F)
 
-view(FWRA)
 Area26 <- FWRA %>% dplyr:: select(Kaouk_C:Artlish_F)
 Area26 <- cbind(FWRA$LF_ID,Area26)
 Area26_C <- Area26 %>% dplyr:: select(ends_with("_C"))
@@ -145,9 +143,7 @@ Area26_C <- cbind(FWRA$LF_ID,Area26_C)
 Area26_F <- Area26 %>% dplyr:: select(ends_with("_F"))
 Area26_F <- cbind(FWRA$LF_ID,Area26_F)
 
-
-require(dplyr)
-#Converting to Counts in the same order
+ #Converting to Counts in the same order
 
 Area23_C_Sums <- Area23_C %>% select(ends_with("_C")) %>%
   gather(key, value, na.rm = TRUE) %>%
@@ -216,7 +212,6 @@ Area24_combo$Combined <- c(rep("Combined",14))
 colnames(Area24_combo)[which(names(Area24_combo) == "value")] <- "Rating"
 
 
-
 ggplot(Area24_combo, aes(x=Time, y=Proportion, fill = Rating))+
   geom_bar(position="stack", stat="identity")+
   labs(x = "Rating Period", y = "Percentage") +
@@ -231,14 +226,14 @@ ggplot(Area24_combo, aes(x=Time, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure2",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure2",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
 
-4#Combined Current + Future
+#Combined Current + Future
 Area24_combo<- Area24_combo %>%                               # Specify data frame
   group_by(Rating) %>%                         # Specify group indicator
   summarise_at(vars(n),              # Specify column
@@ -247,7 +242,6 @@ Area24_combo<- Area24_combo %>%                               # Specify data fra
 Area24_combo$Denominator <- c(rep(1360,7))
 Area24_combo$Proportion <- Area24_combo$Count/Area24_combo$Denominator
 
-  
 
 library(vtable)
 library(RColorBrewer)
@@ -278,14 +272,15 @@ ggplot(longData, aes(x = Consequence, y = Likelihood, fill = value)) +
         axis.title.y = element_text(color = "grey20", size = 20, face = "plain"))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure1",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure1",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
        units = "cm",
        dpi = 300)
+
 ##########Terminal Migration Current (1-15)######
-Area24_Terminal_C <- Area24_C %>% filter(row(Area24_C) >= 1 & row(Area24_C) <= 15)
+Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 1 & `FWRA$LF_ID` <= 15)
 VL <- c("Very Low")
 Area24_Terminal_C <- Area24_Terminal_C %>% 
   mutate(VeryLow = pmap_int(select(., ends_with("_C")), ~sum(c(...) %in% VL)))
@@ -328,30 +323,6 @@ Area24_Terminal_C <- tidyr::pivot_longer(Area24_Terminal_C, cols=c("Very Low","L
 colnames(Area24_Terminal_C)
 Area24_Terminal_C$Rating <- factor(Area24_Terminal_C$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-
-
-ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Terminal Migration - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(0, 16),breaks=seq(1,15,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure8_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
 Area24_Terminal_CVL <- subset(Area24_Terminal_C, Rating == "Very Low")
 Area24_Terminal_CL <- subset(Area24_Terminal_C, Rating == "Low")
 Area24_Terminal_CM <- subset(Area24_Terminal_C, Rating == "Moderate")
@@ -360,11 +331,8 @@ Area24_Terminal_CVH <- subset(Area24_Terminal_C, Rating == "Very High")
 Area24_Terminal_CHPDG <- subset(Area24_Terminal_C, Rating == "High Priority Data Gap")
 Area24_Terminal_CLPDG <- subset(Area24_Terminal_C, Rating == "Low Priority Data Gap")
 
-
-
-
 #Terminal Future
-Area24_Terminal_F <- Area24_F %>% filter(row(Area24_F) >= 1 & row(Area24_F) <= 15)
+Area24_Terminal_F <- Area24_F %>% filter(`FWRA$LF_ID` >= 1 & `FWRA$LF_ID` <= 15)
 VL <- c("Very Low")
 Area24_Terminal_F <- Area24_Terminal_F %>% 
   mutate(VeryLow = pmap_int(select(., ends_with("_F")), ~sum(c(...) %in% VL)))
@@ -405,28 +373,6 @@ Area24_Terminal_F <- tidyr::pivot_longer(Area24_Terminal_F, cols=c("Very Low","L
 colnames(Area24_Terminal_F)
 Area24_Terminal_F$Rating <- factor(Area24_Terminal_F$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Terminal Migration - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(0, 16),breaks=seq(1,15,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure8_F",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
 Area24_Terminal_FVL <- subset(Area24_Terminal_F, Rating == "Very Low")
 Area24_Terminal_FL <- subset(Area24_Terminal_F, Rating == "Low")
 Area24_Terminal_FM <- subset(Area24_Terminal_F, Rating == "Moderate")
@@ -435,22 +381,33 @@ Area24_Terminal_FVH <- subset(Area24_Terminal_F, Rating == "Very High")
 Area24_Terminal_FHPDG <- subset(Area24_Terminal_F, Rating == "High Priority Data Gap")
 Area24_Terminal_FLPDG <- subset(Area24_Terminal_F, Rating == "Low Priority Data Gap")
 
-colnames(Area24_Terminal_C)
+###Combine C+F into one graph ---  here goes nothing
+Area24_Terminal_C$Time <- rep("C", length(Area24_Terminal_C$LimitingFactor))
 
-Area24_Terminal_C <- Area24_Terminal_C %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+Area24_Terminal_F$Time <- rep("F", length(Area24_Terminal_F$LimitingFactor))
 
-Area24_Terminal_F <- Area24_Terminal_F %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+Area24_Terminal_F <- rbind(Area24_Terminal_C,Area24_Terminal_F)
 
-library(dplyr)
+ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ LimitingFactor)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  ggtitle("Area 24 - Terminal Migration")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
-Area24_Terminal_C %>%
-  mutate(prop = prop.table(Frequency))
-Area24_Terminal_F %>%
-  mutate(prop = prop.table(Frequency))
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure8_F",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
 
 
 #############Incubation (16-29)#####
@@ -494,29 +451,6 @@ Area24_Terminal_C <- tidyr::pivot_longer(Area24_Terminal_C, cols=c("Very Low","L
                                          values_to="Proportion")
 colnames(Area24_Terminal_C)
 Area24_Terminal_C$Rating <- factor(Area24_Terminal_C$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
-
-
-ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Incubation - Current Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(15, 30),breaks=seq(16,29,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure9_C",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
 
 Area24_Incubation_CVL <- subset(Area24_Terminal_C, Rating == "Very Low")
 Area24_Incubation_CL <- subset(Area24_Terminal_C, Rating == "Low")
@@ -570,28 +504,6 @@ Area24_Terminal_F <- tidyr::pivot_longer(Area24_Terminal_F, cols=c("Very Low","L
 colnames(Area24_Terminal_F)
 Area24_Terminal_F$Rating <- factor(Area24_Terminal_F$Rating, c("High Priority Data Gap", "Low Priority Data Gap","Very High","High","Moderate","Low","Very Low"))
 
-ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Limiting Factor", y = "Count") +
-  theme_Publication()+ 
-  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Incubation - Future Rating")  +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(limits = c(15, 30),breaks=seq(16,29,1))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
-  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
-
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure9_F",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-
 Area24_Incubation_FVL <- subset(Area24_Terminal_F, Rating == "Very Low")
 Area24_Incubation_FL <- subset(Area24_Terminal_F, Rating == "Low")
 Area24_Incubation_FM <- subset(Area24_Terminal_F, Rating == "Moderate")
@@ -600,21 +512,33 @@ Area24_Incubation_FVH <- subset(Area24_Terminal_F, Rating == "Very High")
 Area24_Incubation_FHPDG <- subset(Area24_Terminal_F, Rating == "High Priority Data Gap")
 Area24_Incubation_FLPDG <- subset(Area24_Terminal_F, Rating == "Low Priority Data Gap")
 
+###Combine C+F into one graph ---  here goes nothing
+Area24_Terminal_C$Time <- rep("C", length(Area24_Terminal_C$LimitingFactor))
 
-Area24_Terminal_C <- Area24_Terminal_C %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+Area24_Terminal_F$Time <- rep("F", length(Area24_Terminal_F$LimitingFactor))
 
-Area24_Terminal_F <- Area24_Terminal_F %>% 
-  group_by(Rating) %>% 
-  summarise(Frequency = sum(Proportion))
+Area24_Terminal_F <- rbind(Area24_Terminal_C,Area24_Terminal_F)
 
-library(dplyr)
+ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ LimitingFactor)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  scale_fill_viridis_d(begin = 0 , end = .94, direction = 1)+
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  ggtitle("Area 24 - Incubation")  +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
-Area24_Terminal_C %>%
-  mutate(prop = prop.table(Frequency))
-Area24_Terminal_F %>%
-  mutate(prop = prop.table(Frequency))
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure8",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
 
 ###############Freshwater Rearing (30-46)##############
 ###Freshwater Rearing Current
@@ -676,7 +600,7 @@ ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure10_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure10_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -749,7 +673,7 @@ ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure10_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure10_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -840,7 +764,7 @@ ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure11_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure11_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -914,7 +838,7 @@ ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure11_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure11_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1004,7 +928,7 @@ ggplot(Area24_Terminal_C, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure12_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure12_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1078,7 +1002,7 @@ ggplot(Area24_Terminal_F, aes(x=LimitingFactor, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure12_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure12_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1245,7 +1169,7 @@ ggplot(ALL_C, aes(x=Group, y=newcount, fill = Rating))+
   scale_y_continuous(limits = c(0,200), breaks=seq(0,200,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure3_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure3_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1298,7 +1222,7 @@ ggplot(ALL_F, aes(x=Group, y=newcount, fill = Rating))+
   scale_y_continuous(limits = c(0,200), breaks=seq(0,200,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure3_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure3_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1348,7 +1272,7 @@ ggplot(Upper_C_Final, aes(x=Group, y=newcount, fill = Rating))+
   scale_y_continuous(limits = c(0,30), breaks=seq(0,30,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure5_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure5_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1386,7 +1310,7 @@ ggplot(Upper_F_Final, aes(x=Group, y=newcount, fill = Rating))+
   scale_y_continuous(limits = c(0,30), breaks=seq(0,30,5))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure5_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure5_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1442,7 +1366,7 @@ ggplot(DG_CF, aes(x=Group, y=newcount, fill = Rating))+
   scale_y_continuous(limits = c(0,300), breaks=seq(0,500,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure6",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure6",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1539,7 +1463,7 @@ ggplot(DG_CF, aes(x=Group, y=Proportion, fill = Rating))+
   scale_fill_manual(values = c("Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure7",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure7",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1593,7 +1517,7 @@ ggplot(ALL_C, aes(x=Group, y=Proportion, fill = Rating))+
 
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure4_C",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure4_C",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1645,7 +1569,7 @@ ggplot(ALL_F, aes(x=Group, y=Proportion, fill = Rating))+
   scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure4_F",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop Backup/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures", "Figure4_F",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
