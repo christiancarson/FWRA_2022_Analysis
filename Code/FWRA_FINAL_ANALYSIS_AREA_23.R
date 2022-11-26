@@ -24,7 +24,7 @@
 
 #install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2",
 #                  "epitools", "readxl", "tidyverse","arsenal")))
-
+#install.packages(c("gt","gtExtras"))
 #now we need to load all the packages into our r script, this is done with the
 #function, library(). For instance, if we want to load the package "boot", we would
 #run the function below. Now, highlight all the functions below in a row and run them
@@ -32,7 +32,7 @@ library(boot)
 library(MASS)
 library(plyr)
 library(dplyr)
-library(plot2)
+library(ggplot2)
 library(tibble)
 library(car)
 library(reshape2)
@@ -47,6 +47,9 @@ library(tidyverse)
 library(patchwork)
 library(palmerpenguins)
 library(viridis)
+library(gt)
+library(gtExtras)
+library(webshot2)
 # <- "https://raw.githubusercontent.com/gadenbuie/yule-rstudio/master/Yule-RStudio.rstheme"
 #rstudioapi::addTheme(yule_theme, apply = TRUE)
 
@@ -101,17 +104,136 @@ data.path <- paste(wd, "/", "Data", sep = "")
 # time to upload the datas
 FWRA <- read.csv(paste(data.path,"/", "R_Ready_Final_FWRA_Results.csv",
                        sep = ""), stringsAsFactors = FALSE)
-colnames(FWRA)
 FWRA <- subset(FWRA, LF_ID != 23 & LF_ID != 24)
 
+FWRA[FWRA=="Low Priority Data Gap"]<-"LPDG"
+FWRA[FWRA=="Very Low"]<-"VL"
+FWRA[FWRA=="Low"]<-"L"
+FWRA[FWRA=="Moderate"]<-"M"
+FWRA[FWRA=="High Priority Data Gap"]<-"HPDG"
+FWRA[FWRA=="Very High"]<-"VH"
+FWRA[FWRA=="High"]<-"H"
+
+FWRA_NUMERIC <- FWRA
+
+FWRA_NUMERIC[FWRA_NUMERIC=="HPDG"]<-"-1"
+FWRA_NUMERIC[FWRA_NUMERIC=="LPDG"]<-"0"
+FWRA_NUMERIC[FWRA_NUMERIC=="VL"]<-"1"
+FWRA_NUMERIC[FWRA_NUMERIC=="L"]<-"2"
+FWRA_NUMERIC[FWRA_NUMERIC=="M"]<-"3"
+FWRA_NUMERIC[FWRA_NUMERIC=="H"]<-"4"
+FWRA_NUMERIC[FWRA_NUMERIC=="VH"]<-"5"
+
+FWRA_NUMERIC <- FWRA_NUMERIC %>% 
+  mutate(across(Sarita_C:Artlish_F, as.numeric))
 
 
-#to view the spread sheet, type view(nuseds)
-#to get a list og all the different varaibles or coloumn names run the code below
+names <- FWRA %>% dplyr:: select(Sarita_C:Artlish_F)
+
+watersheds <- print(unique(colnames(names)))
+watersheds <- c("Sarita","Nahmint","Toquaht","Somass","Megin","Moyeha","Bedwell",
+                "Cypre","Tranquil","Lower.Kennedy","Upper.Kennedy","Sand.River",
+                "Clayoquot.River","Muriel.Creek","Tahsis.River","Leiner.River",
+                "Tsowwin","Sucwoa","Canton","Conuma","Kaouk","Artlish")
+
+for (i in watersheds) {
+
+SARITA_NUMERIC <- FWRA_NUMERIC %>% dplyr:: select(starts_with(print(i)))
+SARITA_NUMERIC <- cbind(FWRA$LF_ID,SARITA_NUMERIC)
+colnames(SARITA_NUMERIC)
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$LF_ID")] <- "LF"
+SARITA_NUMERIC <-SARITA_NUMERIC %>%
+  rename(Current = 2)
+SARITA_NUMERIC <-SARITA_NUMERIC %>%
+  rename(Future = 3)
+SARITA_NUMERIC<-subset(SARITA_NUMERIC, Current!= 0 & Current!= -1 & Future!= 0 & Future!= -1)
+
+SAR <- SARITA_NUMERIC %>%
+  select(Current, Future)
+
+SARITA_NUMERIC <- SARITA_NUMERIC %>% rowwise() %>%
+  dplyr::mutate(Multiple = Current * Future) 
+
+SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$Multiple)
+
+col_order <- c("LF","Rank","Multiple","Current", "Future")
+SARITA_NUMERIC <- SARITA_NUMERIC[, col_order]
+SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$Multiple, decreasing = TRUE),]  
+SARITA_NUMERIC <- SARITA_NUMERIC %>% 
+  mutate(across(Current:Future, as.character))
+
+SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="1"]<-"VL"
+SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="2"]<-"L"
+SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="3"]<-"M"
+SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="4"]<-"H"
+SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="5"]<-"VH"
+SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="1"]<-"VL"
+SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="2"]<-"L"
+SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="3"]<-"M"
+SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="4"]<-"H"
+SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="5"]<-"VH"
+
+mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
+cols <- colorRampPalette(mycols)
+
+SARITA_NUMERIC %>%
+    head(68) %>%
+    gt() %>%
+gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_23_Tables/", print(i),".docx"))
+
+}
+
+#####Watershed Data Gaps######
+
+for (i in watersheds) {
+  
+  SARITA_NUMERIC <- FWRA_NUMERIC %>% dplyr:: select(starts_with(print(i)))
+  SARITA_NUMERIC <- cbind(FWRA$LF_ID,SARITA_NUMERIC)
+  colnames(SARITA_NUMERIC)
+  colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$LF_ID")] <- "LF"
+  SARITA_NUMERIC <-SARITA_NUMERIC %>%
+    rename(Current = 2)
+  SARITA_NUMERIC <-SARITA_NUMERIC %>%
+    rename(Future = 3)
+  SARITA_NUMERIC<-subset(SARITA_NUMERIC, Current!= 1 & Current!= 2 & Current!= 3 & Current!= 4 & Current!= 5 & Future!= 1 & Future!= 2 & Future!= 3 & Future!= 4 & Future!= 5)
+  
+  SAR <- SARITA_NUMERIC %>%
+    select(Current, Future)
+  
+  SARITA_NUMERIC <- SARITA_NUMERIC %>% rowwise() %>%
+    dplyr::mutate(Multiple = Current * Future) 
+  
+  SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$Multiple)
+  
+  col_order <- c("LF","Rank","Multiple","Current", "Future")
+  SARITA_NUMERIC <- SARITA_NUMERIC[, col_order]
+  SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$Multiple, decreasing = TRUE),]  
+  SARITA_NUMERIC <- SARITA_NUMERIC %>% 
+    mutate(across(Current:Future, as.character))
+  
+  SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="-1"]<-"HPDG"
+  SARITA_NUMERIC$Current[SARITA_NUMERIC$Current=="0"]<-"LPDG"
+  SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="-1"]<-"HPDG"
+  SARITA_NUMERIC$Future[SARITA_NUMERIC$Future=="0"]<-"LPDG"
+ 
+  SARITA_NUMERIC <- SARITA_NUMERIC %>%
+    select(LF,Current, Future)
+  
+  mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
+  cols <- colorRampPalette(mycols)
+  
+  SARITA_NUMERIC %>%
+    head(68) %>%
+    gt() %>%
+    gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_23_DG_Tables/", print(i),".docx"))
+  
+}
+
+
+ #to view the spread sheet, type view(nuseds)
+#to get a l ist og all the different varaibles or coloumn names run the code below
 colnames(FWRA)
 
-Current <- FWRA %>% dplyr:: select(ends_with("_C"))
-Future <- FWRA %>% dplyr:: select(ends_with("_F"))
 
 require(dplyr)
 colnames(FWRA)
@@ -143,6 +265,9 @@ Area26_C <- Area26 %>% dplyr:: select(ends_with("_C"))
 Area26_C <- cbind(FWRA$LF_ID,Area26_C)
 Area26_F <- Area26 %>% dplyr:: select(ends_with("_F"))
 Area26_F <- cbind(FWRA$LF_ID,Area26_F)
+
+
+
 
 
 

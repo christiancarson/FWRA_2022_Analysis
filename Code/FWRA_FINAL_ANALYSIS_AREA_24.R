@@ -218,8 +218,7 @@ ggplot(Area24_combo, aes(x=Time, y=Proportion, fill = Rating))+
   theme_Publication()+ 
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Proportion of Risk Ratings and Data Gaps")  +
+        axis.text.y=element_text(color="black")) +
   theme(plot.title = element_text(hjust = 0.5))+
   scale_x_discrete(limits = c("Current", "Future"), labels = c("Current \n (n = 680)","Future  \n (n = 680)"))+
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"),limits = c("Very High", "High", "Moderate", "High Priority Data Gap","Low","Very Low", "Low Priority Data Gap"))+
@@ -248,6 +247,8 @@ library(vtable)
 library(RColorBrewer)
 library(dplyr)
 library(ggplot2)
+
+
 myData <- matrix(c(2,2,3,3,3,1,2,2,3,3,1,1,2,2,3,1,1,2,2,2,1,1,1,1,2), nrow = 5, ncol = 5, byrow = TRUE)
 longData <- reshape2::melt(myData)
 colnames(longData) <- c("Likelihood", "Consequence", "value")
@@ -274,7 +275,7 @@ ggplot(longData, aes(x = Consequence, y = Likelihood, fill = value)) +
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
 pdf(NULL)
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure1",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure4",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -398,7 +399,6 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Terminal Migration")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
@@ -407,7 +407,7 @@ library(tidyverse)
 
 pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures//", "Figure8",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures//", "Figure9",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -532,14 +532,13 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Incubation")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure9",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure10",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -663,14 +662,13 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Freshwater Rearing")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure10",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure11",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -799,14 +797,13 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Estuary Rearing")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure11",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure12",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -934,14 +931,13 @@ ggplot(Area24_Terminal_F, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Biological Characteristics")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,10), breaks=seq(0,15,5))
 
 pdf(NULL)
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure12",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure13",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1119,6 +1115,11 @@ unique(ALL$Group)
 
 ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
 
+BiologicalCharacteristics <- filter(ALL, Group == "Biological Characteristics")
+
+ALL <- subset(ALL, Group != "Biological Characteristics")
+
+
 #Upper$Group <- revalue(Upper$Group , c("Terminal" = "Terminal Migration (n = )",
                                        "Incubation" = "Incubation (n = 50)", 
                                        "Freshwater Rearing" = "Freshwater Rearing (n = 53)",
@@ -1135,13 +1136,33 @@ ggplot(ALL, aes(x=Time, y=newcount, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Count of Ratings Grouped by Lifestage")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,200), breaks=seq(0,200,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 3",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 6",".jpeg"),
+       device = "jpeg",
+       width = 30,
+       height = 30,
+       units = "cm",
+       dpi = 300)
+dev.off() 
+
+###Biological Characteristics Category
+ggplot(BiologicalCharacteristics, aes(x=Time, y=newcount, fill = Rating))+
+  geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
+  labs(x = "Rating Period", y = "Count") +
+  theme_Publication()+ 
+  theme(axis.text=element_text(size=14),
+        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+        axis.text.y=element_text(color="black"))+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
+  scale_y_continuous(limits = c(0,40), breaks=seq(0,40,5))
+
+#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 7",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1217,6 +1238,10 @@ ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rear
 pdf(NULL)
 library(ggplot2)
 
+ALL <- subset(ALL, Group != "Biological Characteristics")
+view(ALL)
+dev.off()
+
 ggplot(ALL, aes(x=Time, y=Proportion, fill = Rating))+
   geom_bar(position="stack", stat="identity")+ facet_grid(~ Group)+
   labs(x = "Rating Period", y = "Count") +
@@ -1224,10 +1249,10 @@ ggplot(ALL, aes(x=Time, y=Proportion, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Count of Considerable Ratings Grouped by Lifestage")  +
   theme(plot.title = element_text(hjust = 0.5)) +
   scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,30), breaks=seq(0,30,5))
+
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
 ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure 5",".jpeg"),
@@ -1274,6 +1299,10 @@ DG_CF$Denominator <- c(294,216,56,140,120,294,216,56,140,120)
 DG_CF$Proportion <- DG_CF$newcount/DG_CF$Denominator
 
 
+
+DG_CF <- subset(DG_CF, Group != "Biological Characteristics")
+
+
 ggplot(DG_CF, aes(x=Group, y=newcount, fill = Rating))+
   geom_bar(position="stack", stat="identity")+
   labs(x = "Life Stage", y = "Count of Data Gaps") +
@@ -1282,14 +1311,13 @@ ggplot(DG_CF, aes(x=Group, y=newcount, fill = Rating))+
   theme(axis.text=element_text(size=14),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black"))+
-  ggtitle("Area 24 - Data Gaps Grouped by Lifestage - Current & Future")  +
   theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
+  scale_x_discrete(limits = c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing"), labels = c("Terminal\n Migration\n (n = 120)","Incubation\n (n = 140)","Freshwater\nRearing\n (n = 216)","Estuary\nRearing\n (n = 294)","Biological \n Characteristics & \n Genetics\n (n = 56)"))+
   scale_fill_manual(values = c("Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"))+
   scale_y_continuous(limits = c(0,300), breaks=seq(0,500,25))
 
 #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure6",".jpeg"),
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure8",".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -1421,7 +1449,7 @@ ALL<- rbind(ALL_C,ALL_F)
 unique(ALL$Group)
 
 ALL$Group <- factor(ALL$Group, levels=c("Terminal","Incubation","Freshwater Rearing","Estuary Rearing","Biological Characteristics")) 
-
+view(ALL)
 #Upper$Group <- revalue(Upper$Group , c("Terminal" = "Terminal Migration (n = )",
 #"Incubation" = "Incubation (n = 50)", 
 #"Freshwater Rearing" = "Freshwater Rearing (n = 53)",
