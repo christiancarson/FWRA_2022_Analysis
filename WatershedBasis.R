@@ -28,6 +28,8 @@
 #now we need to load all the packages into our r script, this is done with the
 #function, library(). For instance, if we want to load the package "boot", we would
 #run the function below. Now, highlight all the functions below in a row and run them
+#remotes::install_github("ManuelHentschel/vscDebugger")
+
 library(boot)
 library(MASS)
 library(plyr)
@@ -54,6 +56,10 @@ library(reshape2)
 library(dplyr)
 library(ggplot2)
 library(knitr)
+#install.packages("vtable")
+library(vtable)
+#install.packages("ggrepel")
+library(ggrepel)
 # <- "https://raw.githubusercontent.com/gadenbuie/yule-rstudio/master/Yule-RStudio.rstheme"
 #rstudioapi::addTheme(yule_theme, apply = TRUE)
 
@@ -71,6 +77,9 @@ library("zoo")
 #
 #--------------make project folders and folder paths----------------------------
 
+library(httpgd)
+
+hgd_browse()
 
 wd <- getwd()  # working directory
 
@@ -107,10 +116,19 @@ data.path <- paste(wd, "/", "Data", sep = "")
 FWRA <- read.csv(paste(data.path,"/", "Area23_Watersheds_Cleaned.csv",
                        sep = ""), stringsAsFactors = FALSE)
 
-FWRA <- subset(FWRA, LF != 23 & LF != 24)
+FWRA <- subset(FWRA, LF != "LF23" & LF != "LF24")
 
 # time to upload the datas
 watersheds <- c(print(unique(FWRA$W)))
+
+st(FWRA)
+Gaps <- subset(FWRA, CR <= 0)
+Risks<-subset(FWRA, CR= 0 & CR!= -1)
+unique(Gaps$TR)
+count((subset(FWRA, TR = 0)))
+count((subset(FWRA, TR = 1)))
+
+
 
 options(ggrepel.max.overlaps = Inf)
 for (i in watersheds) {
@@ -122,7 +140,6 @@ library(vtable)
 library(RColorBrewer)
 library(dplyr)
 library(ggplot2)
-library(ggrepel)
 
 myData <- matrix(c(2,2,3,3,3,1,2,2,3,3,1,1,2,2,3,1,1,2,2,2,1,1,1,1,2), nrow = 5, ncol = 5, byrow = TRUE)
 longData <- reshape2::melt(myData)

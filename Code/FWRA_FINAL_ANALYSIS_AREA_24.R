@@ -64,7 +64,8 @@ library(zoo)
 #--------------make project folders and folder paths----------------------------
 
 
-wd <- getwd()  # working directory
+wd <- print(getwd)  # working directory
+wd <- "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis"
 
 folders <- c("Data Output", "Figures")
 # function to create folders below
@@ -95,7 +96,7 @@ figures.path <- paste(wd, "/", folders[2], sep = "")
 #on in the program
 data.path <- paste(wd, "/", "Data", sep = "")
 
-
+data.path
 
 # time to upload the datas
 FWRA <- read.csv(paste(data.path,"/", "R_Ready_Final_FWRA_Results.csv",
@@ -194,6 +195,11 @@ Area24_F_Sums <- Area24_F_Sums %>%
 
 Area24_combo <- rbind(Area24_C_Sums,Area24_F_Sums)
 cols <- c("Very\n Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "orange", "Very\n High" = "red4", "Low Priority\n Data Gap" = "grey70", "High Priority\n Data Gap" = "purple")
+#remotes::install_github("nx10/httpgd")
+
+library(httpgd)
+hgd()
+hgd_browse()
 
 Area24_combo %>%
   ggplot(aes(x=value, y = n, fill = Time)) +
@@ -201,7 +207,9 @@ Area24_combo %>%
   labs(x = "Rating", y = "Count") + 
   theme_Publication()+
   scale_fill_viridis_d(option="magma",direction = -1,begin = 0.2, end = .80)+ ggtitle("Area 24 - Count of Risk Rankings Across All LF's") 
-print(Area24_combo)
+
+
+View(plot)
 
 Area24_combo$denominator <- c(rep(680,14))
 head(Area24_combo)

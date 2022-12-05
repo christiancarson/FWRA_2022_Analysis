@@ -22,19 +22,21 @@
 #the packages you need are below, unhashtag the sentance below to install packages 
 #hit cmd + enter to run this code or highlight it and click run in the top right corner
 
-#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2",
-#                  "epitools", "readxl", "tidyverse","arsenal")))
-#install.packages(c("gt","gtExtras"))
+#install.packages(c("boot", "MASS","plyr","dplyr", "gplot2", "tibble", "car", "reshape2","epitools", "readxl", "tidyverse","arsenal","gt","gtExtras","httpgd","rlang","languageserver","jsonlite"))
+#install.packages('jsonlite', dependencies=TRUE, repos='http://cran.rstudio.com/')
+#install.packages('ggplot2')
+#install.packages('car')
 #now we need to load all the packages into our r script, this is done with the
 #function, library(). For instance, if we want to load the package "boot", we would
 #run the function below. Now, highlight all the functions below in a row and run them
+#install.packages("jsonlite")
+
 library(boot)
 library(MASS)
 library(plyr)
 library(dplyr)
 library(ggplot2)
 library(tibble)
-library(car)
 library(reshape2)
 library(epitools)
 library(readxl)
@@ -42,7 +44,8 @@ library(tidyverse)
 library(readr)
 library(arsenal)
 source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
-#install.packages(c("ggplot2", "patchwork", "palmerpenguins"))
+#install.packages(c("patchwork", "palmerpenguins"))
+#install.packages("zoo")
 library(tidyverse)
 library(patchwork)
 library(palmerpenguins)
@@ -63,12 +66,14 @@ library(webshot2)
 #--------------any libraries needed are loaded and displayed below--------------
 #
 library(dplyr)
-library("zoo")
+library(zoo)
 #
 #--------------make project folders and folder paths----------------------------
-
+getwd()
 
 wd <- getwd()  # working directory
+
+#wd <- "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis"
 
 folders <- c("Data Output", "Figures")
 # function to create folders below
@@ -104,7 +109,10 @@ data.path <- paste(wd, "/", "Data", sep = "")
 # time to upload the datas
 FWRA <- read.csv(paste(data.path,"/", "R_Ready_Final_FWRA_Results.csv",
                        sep = ""), stringsAsFactors = FALSE)
-FWRA <- subset(FWRA, LF_ID != 23 & LF_ID != 24)
+colnames(FWRA)
+
+FWRA <- subset(FWRA, Limiting.Factor != "LF22: Mortality or fitness reduction resulting from frequent and higher peak flows causing redd scour" & Limiting.Factor != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+unique(FWRA$Limiting.Factor)
 
 FWRA[FWRA=="Low Priority Data Gap"]<-"LPDG"
 FWRA[FWRA=="Very Low"]<-"VL"
@@ -139,9 +147,9 @@ watersheds <- c("Sarita","Nahmint","Toquaht","Somass","Megin","Moyeha","Bedwell"
 for (i in watersheds) {
 
 SARITA_NUMERIC <- FWRA_NUMERIC %>% dplyr:: select(starts_with(print(i)))
-SARITA_NUMERIC <- cbind(FWRA$LF_ID,SARITA_NUMERIC)
+SARITA_NUMERIC <- cbind(FWRA$Limiting.Factor,SARITA_NUMERIC)
 colnames(SARITA_NUMERIC)
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$LF_ID")] <- "LF"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$Limiting.Factor")] <- "LF"
 SARITA_NUMERIC <-SARITA_NUMERIC %>%
   rename(Current = 2)
 SARITA_NUMERIC <-SARITA_NUMERIC %>%
@@ -188,9 +196,9 @@ gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 for (i in watersheds) {
   
   SARITA_NUMERIC <- FWRA_NUMERIC %>% dplyr:: select(starts_with(print(i)))
-  SARITA_NUMERIC <- cbind(FWRA$LF_ID,SARITA_NUMERIC)
+  SARITA_NUMERIC <- cbind(FWRA$Limiting.Factor,SARITA_NUMERIC)
   colnames(SARITA_NUMERIC)
-  colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$LF_ID")] <- "LF"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FWRA$Limiting.Factor")] <- "LF"
   SARITA_NUMERIC <-SARITA_NUMERIC %>%
     rename(Current = 2)
   SARITA_NUMERIC <-SARITA_NUMERIC %>%
@@ -229,7 +237,6 @@ for (i in watersheds) {
   
 }
 
-
  #to view the spread sheet, type view(nuseds)
 #to get a l ist og all the different varaibles or coloumn names run the code below
 colnames(FWRA)
@@ -265,8 +272,6 @@ Area26_C <- Area26 %>% dplyr:: select(ends_with("_C"))
 Area26_C <- cbind(FWRA$LF_ID,Area26_C)
 Area26_F <- Area26 %>% dplyr:: select(ends_with("_F"))
 Area26_F <- cbind(FWRA$LF_ID,Area26_F)
-
-
 
 
 
