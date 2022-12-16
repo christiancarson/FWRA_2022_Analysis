@@ -112,7 +112,7 @@ data.path <- paste(wd, "/", "Data", sep = "")
 
 #####you will need to find the exact path of the FINAL_FWRA_RESULTS_ALL_AREAS_MASTER path on our sharepoint and paste it below
                        
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
@@ -187,7 +187,7 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 # time to upload the datas
 ####Risk Rankings
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
@@ -247,7 +247,7 @@ gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 # time to upload the datas
 ####Data Gaps
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
@@ -296,3 +296,11 @@ unique(SARITA_NUMERIC$LF)
     gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/", print(i),".docx"))
   
 }
+
+
+
+
+
+
+
+
