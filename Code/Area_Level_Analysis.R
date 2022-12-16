@@ -1,246 +1,628 @@
 ######Intro#######
-#Hi team, welcome to our R script for creating plots for Area 25. To follow along
-#view my comments in the "#" regions, these will provide you a guide for what to
-#change in your own analysis
+#This script is for the FWRA 2022 analysis
 
 #GUIDE#
-#Areas where you will need to make changes are indicated with "#$#", copy 
-#and paste this text and paste it into the find function (command F), to view
-#all the areas where you need to make changes
+#1. Load libraries or install libraries
+#--------------any libraries needed are loaded and displayed below--------------
+#install packages below if needed
+#install.packages("boot","mass","plyr","dplyr","ggplot2","tibble","reshape2","epitools","readxl","tidyverse","arsenal","patchwork","palmerpenguins","viridis","ggthemes","ggpubr","dplyr","zoo")
 
-#whenever begging an R script, make sure to write down key infromation to the script
-#such as its title, author, date updated, etc. Example below for this script:
-
-#Title: Area 25 Plots Template
-#Author: Critty (Christian) Carson
-#Last updated : November 21th, 2021
-#Description : Summaries of NUSEDS escapement, hydromet data, 
-
-#all scripts should start with installing packages, which are basically mini programs
-#that you can add within R to help you do analyses or make specific kinds of plots
-
-#the packages you need are below, unhashtag the sentance below to install packages 
-#hit cmd + enter to run this code or highlight it and click run in the top right corner
-
-#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2","epitools", "readxl", "tidyverse","arsenal"))
-#install.packages(c("ggthemes"))
-
-#now we need to load all the packages into our r script, this is done with the
-#function, library(). For instance, if we want to load the package "boot", we would
-#run the function below. Now, highlight all the functions below in a row and run them
+#load packages below
 library(boot)
 library(MASS)
 library(plyr)
 library(dplyr)
 library(ggplot2)
 library(tibble)
-library(car)
 library(reshape2)
 library(epitools)
 library(readxl)
 library(tidyverse)
 library(readr)
 library(arsenal)
-source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
 library(tidyverse)
 library(patchwork)
 library(palmerpenguins)
 library(viridis)
-# <- "https://raw.githubusercontent.com/gadenbuie/yule-rstudio/master/Yule-RStudio.rstheme"
-#rstudioapi::addTheme(yule_theme, apply = TRUE)
-
-
-#ok, so we have loaded all out packages and we are now ready to import data for
-#specific analyses. First, we must designate a section; this is done bye putting 5 or more "#"'s in a row
-#below we are going to analyize escapement data from the NUseds database, so we naming the section as:
-
-#####Setup#####
-
-#--------------any libraries needed are loaded and displayed below--------------
-#
+library(ggthemes)
 library(dplyr)
 library(zoo)
-#
-#--------------make project folders and folder paths----------------------------
 
+#plot dpace
+#setup plot call
+library(httpgd)
+hgd()
+hgd_browse()
 
+#2. Source and set themes
+source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
+theme_set(theme_Publication())
+
+#3. Set working directory
 wd <- print(getwd)  # working directory
 wd <- "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis"
 
+#4. Create folders
+#--------------make project folders and folder paths----------------------------
+# create a vector of folder names
 folders <- c("Data Output", "Figures")
 # function to create folders below
 for(i in 1:length(folders)){
   if(file.exists(folders[i]) == FALSE)
     dir.create(folders[i])
 }
-
-
 # we also need to store the paths to these new folders
 data.output.path <- paste(wd, "/", folders[1], sep = "")
 figures.path <- paste(wd, "/", folders[2], sep = "")
-
-
 # now we can access and save stuff to these folders!
 
-
-
+#5. Load data
 #---------------------Below, we upload and clean the data----------
-
-
-#first, lets load in out data. Do this either by selecting the drop down menu
-#go to file, import data, import data from excel, and import your data
-#copy and paste the output from the console tab below, like I did here
-#alternativley, just run my code below
-#make sure you name and assign your new spreadsheet, below I assign this import
-#by naming it "nuseds" below, now when I use the name nuseds, it will be called
-#on in the program
 data.path <- paste(wd, "/", "Data", sep = "")
 
-data.path
-
 # time to upload the datas
-FWRA <- read.csv(paste(data.path,"/", "R_Ready_Final_FWRA_Results.csv",
-                         sep = ""), stringsAsFactors = FALSE)
-colnames(FWRA)
-FWRA <- subset(FWRA, LF_ID != 23 & LF_ID != 24)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
+
+#6. Clean data
+#Subset data that is not needed
+
+FWRA <- subset(FWRA, LF != 23 & LF != 24)
+
+#6. Add columns
+
+#Add Area column
+FWRA <- FWRA %>%
+  mutate(Area = case_when(
+    endsWith(W, "Toquaht") ~ "Area 23",
+    endsWith(W, "Nahmint") ~ "Area 23",
+    endsWith(W, "Sarita") ~ "Area 23",
+    endsWith(W, "Somass") ~ "Area 23",
+    endsWith(W, "Megin") ~ "Area 24",
+    endsWith(W, "Moyeha") ~ "Area 24",
+    endsWith(W, "Cypre") ~ "Area 24",
+    endsWith(W, "Bedwell") ~ "Area 24",
+    endsWith(W, "Tranquil") ~ "Area 24",
+    endsWith(W, "Lower Kennedy") ~ "Area 24",
+    endsWith(W, "Upper Kennedy") ~ "Area 24",
+    endsWith(W, "Sand") ~ "Area 24",
+    endsWith(W, "Clayoquot") ~ "Area 24",
+    endsWith(W, "Muriel") ~ "Area 24",
+    endsWith(W, "Tahsis") ~ "Area 25",
+    endsWith(W, "Leiner") ~ "Area 25",
+    endsWith(W, "Tsowwin") ~ "Area 25",
+    endsWith(W, "Sucwoa") ~ "Area 25",
+    endsWith(W, "Canton") ~ "Area 25",
+    endsWith(W, "Conuma") ~ "Area 25",
+    endsWith(W, "Artlish") ~ "Area 26",
+    endsWith(W, "Kaouk") ~ "Area 26",
+    ))
+
+#7. Create new dataframes
+#convert numeric to character
+FWRA_Character <- FWRA
+
+#convert numeric to character for CR
+FWRA_Character$CR[FWRA_Character$CR=="-1"]<-"HPDG"
+FWRA_Character$CR[FWRA_Character$CR=="0"]<-"LPDG"
+FWRA_Character$CR[FWRA_Character$CR=="1"]<-"VL"
+FWRA_Character$CR[FWRA_Character$CR=="2"]<-"L"
+FWRA_Character$CR[FWRA_Character$CR=="3"]<-"M"
+FWRA_Character$CR[FWRA_Character$CR=="4"]<-"H"
+FWRA_Character$CR[FWRA_Character$CR=="5"]<-"VH"
+
+#convert numeric to character for FR
+FWRA_Character$FR[FWRA_Character$FR=="-1"]<-"HPDG"
+FWRA_Character$FR[FWRA_Character$FR=="0"]<-"LPDG"
+FWRA_Character$FR[FWRA_Character$FR=="1"]<-"VL"
+FWRA_Character$FR[FWRA_Character$FR=="2"]<-"L"
+FWRA_Character$FR[FWRA_Character$FR=="3"]<-"M"
+FWRA_Character$FR[FWRA_Character$FR=="4"]<-"H"
+FWRA_Character$FR[FWRA_Character$FR=="5"]<-"VH"
+
+# Load dplyr library
+library(dplyr)
+
+# Select columns CR and FR
+C <- FWRA_Character %>%
+  select(CR, FR, Area)
+
+# Create a vector of column names
+cols <- c("CR", "FR")
+
+# Create an empty list to store the data frames
+df_list <- list()
+
+# Loop through the vector of column names
+for (col in cols) {
+  
+  # Group the data frame by the 'Area' column
+  C_grouped <- C %>% group_by(Area)
+
+  # Count the number of times each value occurs in the column by group
+  C_counted <- C_grouped %>% count(!!as.name(col))
+
+  # Rename the 'n' column to 'count'
+  C_renamed <- C_counted %>% rename(count = n)
+
+  # Sort the data frame by the 'group' column
+  C_sorted <- C_renamed %>% arrange(Area)
+
+  # Factor the data
+  C_factored <- C_sorted
+  C_factored[[col]] <- factor(C_factored[[col]], levels = c("LPDG", "HPDG", "VL", "L", "M", "H", "VH"))
+
+  # Append the data frame to the list
+  df_list[[col]] <- C_factored
+
+}
+
+ CR <- df_list["CR"]
+ FR <- df_list["FR"]
+
+#Select only HPDG and LPDG
+CDG <- CR[[1]] %>% filter(CR == "HPDG" | CR == "LPDG")
+FDG <- FR[[1]] %>% filter(FR == "HPDG" | FR == "LPDG")
+
+#Remove HPDG and LPDG and put into new dataframe
+CR <- CR[[1]] %>% filter(CR != "HPDG" & CR != "LPDG")
+FR <- FR[[1]] %>% filter(FR != "HPDG" & FR != "LPDG")
+
+# Create a list of data frames
+data_frames <- list(CR, FR, CDG, FDG)
+
+#vector for areas
+Areas <- unique(FWRA$Area)
+
+#factor data frames by Area
+data_frames <- lapply(data_frames, function(df) {
+  df$Area <- factor(df$Area, levels = Areas)
+  return(df)
+})
+
+#replicate the sum of the count based on each area into a new column based on the number of rows in each area
+# Iterate over the data frames
+df_names <- c("CR", "FR", "CDG", "FDG")
+
+for (i in seq_along(data_frames)) {
+  
+  # Summarize the counts by area
+  area_counts <- data_frames[[i]] %>% 
+    group_by(Area) %>% 
+    summarize(count = sum(count))
+  
+  # Join the counts to the original data frame
+  data_frames[[i]] <- data_frames[[i]] %>% 
+    left_join(area_counts, by = "Area")
+  
+  # Save the updated data frame
+  assign(x = df_names[i], value = data_frames[[i]])
+}
+
+#8. Make proportion column
+
+# Use lapply to apply a function to each element of the list
+data_frames <- lapply(data_frames, function(df) {
+  library(dplyr)
+  # Calculate the proportion for each dataframe and sum only the rows in Area 23
+  df$Proportion <- (df$count.x / df$count.y)
+  # Remove the 'count' column
+  df$count <- NULL
+#   Return the modified data frame
+  return(df)
+})
+
+#use lapply to remove the count.x and count.y columns
+#data_frames <- lapply(data_frames, function(df) {
+ # df$count.x <- NULL
+  #df$count.y <- NULL
+  #return(df)
+#})
+
+
+# take dfs from list and save as new dfs
+CR <- data_frames[[1]]
+FR <- data_frames[[2]]
+CDG <- data_frames[[3]]
+FDG <- data_frames[[4]]
+
+#colnames
+colnames(CR)
+
+#rename columns
+names(CR) <- c("Area", "Rating", "Count","Total","Proportion")
+names(FR) <- c("Area", "Rating", "Count","Total","Proportion")
+names(CDG) <- c("Area", "Rating", "Count","Total","Proportion")
+names(FDG) <- c("Area", "Rating", "Count","Total","Proportion")
+
+#add time column
+CR$Time <- rep("C", length(CR$Rating))
+FR$Time <- rep("F", length(FR$Rating)) 
+CR_FR<- rbind(CR,FR)
+
+#add time column
+CDG$Time <- rep("C", length(CDG$Rating))
+FDG$Time <- rep("F", length(FDG$Rating))
+CDG_FDG<- rbind(CDG,FDG)
+
+#check for NA
+any(is.na(CR_FR))
+any(is.na(CR_FR))
+
+#remove rows with NA
+CR_FR <- CR_FR[complete.cases(CR_FR), ] 
+CDG_FDG <- CDG_FDG[complete.cases(CDG_FDG), ]
+
+#9. Plot
+
+#factor High to Low
+CR_FR$Rating <- factor(CR_FR$Rating, levels = c("VH", "H", "M", "L", "VL"))
+CDG_FDG$Rating <- factor(CDG_FDG$Rating, levels = c("HPDG", "LPDG"))
+
+#rename dataframes
+Current_Risk_Future_Risk_All_Areas <- CR_FR
+Current_DG_Future_DG_All_Areas <- CDG_FDG
+
+#plot for percentage of current risk and future risk
+ggplot(Current_Risk_Future_Risk_All_Areas, aes(x= Time, y=Proportion, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      labs(x = "Rating Period", y = "Percentage") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M"= "gold1","H" = "darkorange1", "VH" = "red3",  "LPDG" = "grey70", "HPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)  
+
+    # print the plot
+    print(plot)
+
+    # save the plot
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", "Percentage_Current_Risk_Future_Risk_All_Areas","_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+
+#plot for precentage of current DG and future DG
+ggplot(Current_DG_Future_DG_All_Areas, aes(x= Time, y=Proportion, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      labs(x = "Rating Period", y = "Percentage") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M"= "gold1","H" = "darkorange1", "VH" = "red3",  "LPDG" = "grey70", "HPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)  
+
+    # print the plot
+    print(plot)
+
+    # save the plot
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", "Percentage_Current_DG_Future_DG_All_Areas","_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+
+   #plot count for current risk and future risk
+ggplot(Current_Risk_Future_Risk_All_Areas, aes(x= Time, y= Count, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M"= "gold1","H" = "darkorange1", "VH" = "red3",  "LPDG" = "grey70", "HPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,300), breaks=seq(0,300,50))  
+    # print the plot
+    print(plot)
+
+        # save the plot
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", "Count_of_Current_Risk_Future_Risk_All_Areas","_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)      
+
+   #plot count for current DG and future DG
+ggplot(Current_DG_Future_DG_All_Areas, aes(x= Time, y= Count, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M"= "gold1","H" = "darkorange1", "VH" = "red3",  "LPDG" = "grey70", "HPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,425), breaks=seq(0,425,50))  
+    # print the plot
+    print(plot)
+
+        # save the plot
+ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", "Count_Current_DG_Future_DG_All_Areas","_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)        
+
+#10. Export to csv
+write.csv(CR_FR, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/CR_FR.csv", row.names = FALSE)
+write.csv(CDG_FDG, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/CDG_FDG.csv", row.names = FALSE)
 
 
 
-#to view the spread sheet, type view(nuseds)
-#to get a list og all the different varaibles or coloumn names run the code below
-colnames(FWRA)
-
-Current <- FWRA %>% dplyr:: select(ends_with("_C"))
-Future <- FWRA %>% dplyr:: select(ends_with("_F"))
-
-require(dplyr)
-colnames(FWRA)
-Area23 <- FWRA %>% dplyr:: select(Sarita_C:Somass_F)
-Area23 <- cbind(FWRA$LF_ID,Area23)
-Area23_C <- Area23 %>% dplyr:: select(ends_with("_C"))
-Area23_C <- cbind(FWRA$LF_ID,Area23_C)
-Area23_F <- Area23 %>% dplyr:: select(ends_with("_F"))
-Area23_F <- cbind(FWRA$LF_ID,Area23_F)
-
-Area24 <- FWRA %>% dplyr:: select(Megin_C:Muriel.Creek_F)
-Area24 <- cbind(FWRA$LF_ID,Area24)
-Area24_C <- Area24 %>% dplyr:: select(ends_with("_C"))
-Area24_C <- cbind(FWRA$LF_ID,Area24_C)
-Area24_F <- Area24 %>% dplyr:: select(ends_with("_F"))
-Area24_F <- cbind(FWRA$LF_ID,Area24_F)
-colnames(Area24)
-
-Area25 <- FWRA %>% dplyr:: select(Tahsis.River_C:Conuma_F)
-Area25 <- cbind(FWRA$LF_ID,Area25)
-Area25_C <- Area25 %>% dplyr:: select(ends_with("_C"))
-Area25_C <- cbind(FWRA$LF_ID,Area25_C)
-Area25_F <- Area25 %>% dplyr:: select(ends_with("_F"))
-Area25_F <- cbind(FWRA$LF_ID,Area25_F)
-
-Area26 <- FWRA %>% dplyr:: select(Kaouk_C:Artlish_F)
-Area26 <- cbind(FWRA$LF_ID,Area26)
-Area26_C <- Area26 %>% dplyr:: select(ends_with("_C"))
-Area26_C <- cbind(FWRA$LF_ID,Area26_C)
-Area26_F <- Area26 %>% dplyr:: select(ends_with("_F"))
-Area26_F <- cbind(FWRA$LF_ID,Area26_F)
-
- #Converting to Counts in the same order
-
-Area23_C_Sums <- Area23_C %>% select(ends_with("_C")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-Area23_C_Sums$value <- factor(Area23_C_Sums$value, c("Very Low", "Low", "Moderate","High","Very High","Low Priority Data Gap","High Priority Data Gap"))
-
-Area23_F_Sums <- Area23_F %>% select(ends_with("_F")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-Area23_F_Sums$value <- factor(Area23_F_Sums$value, c("Very Low", "Low", "Moderate","High","Very High","Low Priority Data Gap","High Priority Data Gap"))
-
-#Area 24
-Area24_C_Sums <- Area24_C %>% select(ends_with("_C")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-Area24_C_Sums$value <- factor(Area24_C_Sums$value, c("Very Low", "Low", "Moderate","High","Very High","Low Priority Data Gap","High Priority Data Gap"))
-
-Area24_F_Sums <- Area24_F %>% select(ends_with("_F")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-Area24_F_Sums$value <- factor(Area24_F_Sums$value, c("Very Low", "Low", "Moderate","High","Very High","Low Priority Data Gap","High Priority Data Gap"))
-
-#Area 25
-Area25_C_Sums <- Area25_C %>% select(ends_with("_C")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-
-Area25_F_Sums <- Area25_F %>% select(ends_with("_F")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-
-#Area 26
-Area26_C_Sums <- Area26_C %>% select(ends_with("_C")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-
-Area26_F_Sums <- Area26_F %>% select(ends_with("_F")) %>%
-  gather(key, value, na.rm = TRUE) %>%
-  count(value)
-
-#Compiling Area 24
-Area24_C_Sums <- Area24_C_Sums %>% 
-  add_column(Time = "Current",
-             .after = "n")
-Area24_F_Sums <- Area24_F_Sums %>% 
-  add_column(Time = "Future",
-             .after = "n")
-
-Area24_combo <- rbind(Area24_C_Sums,Area24_F_Sums)
-cols <- c("Very\n Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "orange", "Very\n High" = "red4", "Low Priority\n Data Gap" = "grey70", "High Priority\n Data Gap" = "purple")
-#remotes::install_github("nx10/httpgd")
-
-library(httpgd)
-hgd()
-hgd_browse()
-
-Area24_combo %>%
-  ggplot(aes(x=value, y = n, fill = Time)) +
-  geom_col(position = position_dodge2(width = 0.9, preserve = "single")) +
-  labs(x = "Rating", y = "Count") + 
-  theme_Publication()+
-  scale_fill_viridis_d(option="magma",direction = -1,begin = 0.2, end = .80)+ ggtitle("Area 24 - Count of Risk Rankings Across All LF's") 
+#####Do the same steps above but group by waterbody#####
+# Select columns CR and FR
+C <- FWRA_Character %>%
+  select(CR, FR, W, Area)
 
 
-View(plot)
+# Create a vector of column names
+cols <- c("CR", "FR")
 
-Area24_combo$denominator <- c(rep(680,14))
-head(Area24_combo)
+# Create an empty list to store the data frames
+df_list <- list()
 
-Area24_combo$Proportion <- Area24_combo$n/Area24_combo$denominator
-Area24_combo$Combined <- c(rep("Combined",14))
+# Loop through the vector of column names
+for (col in cols) {
+  
+  # Group the data frame by the 'W' and 'Area' column
+  C_grouped <- C %>% group_by(W, Area)
 
-colnames(Area24_combo)[which(names(Area24_combo) == "value")] <- "Rating"
+  # Count the number of times each value occurs in the column by group
+  C_counted <- C_grouped %>% count(!!as.name(col))
+
+  # Rename the 'n' column to 'count'
+  C_renamed <- C_counted %>% rename(count = n)
+
+  # Sort the data frame by the 'group' column
+  C_sorted <- C_renamed %>% arrange(Area)
+
+  # Factor the data
+  C_factored <- C_sorted
+  C_factored[[col]] <- factor(C_factored[[col]], levels = c("LPDG", "HPDG", "VL", "L", "M", "H", "VH"))
+
+  # Append the data frame to the list
+  df_list[[col]] <- C_factored
+
+}
+
+ CR <- df_list["CR"]
+ FR <- df_list["FR"]
+
+#Select only HPDG and LPDG
+CDG <- CR[[1]] %>% filter(CR == "HPDG" | CR == "LPDG")
+FDG <- FR[[1]] %>% filter(FR == "HPDG" | FR == "LPDG")
+
+#Remove HPDG and LPDG and put into new dataframe
+CR <- CR[[1]] %>% filter(CR != "HPDG" & CR != "LPDG")
+FR <- FR[[1]] %>% filter(FR != "HPDG" & FR != "LPDG")
+
+# Create a list of data frames
+data_frames <- list(CR, FR, CDG, FDG)
+
+#vector for areas
+Areas <- unique(FWRA$Area)
+
+#factor data frames by Area
+data_frames <- lapply(data_frames, function(df) {
+  df$Area <- factor(df$Area, levels = Areas)
+  return(df)
+})
+
+#replicate the sum of the count based on each area into a new column based on the number of rows in each area
+# Iterate over the data frames
+df_names <- c("CR", "FR", "CDG", "FDG")
+
+for (i in seq_along(data_frames)) {
+  
+  # Summarize the counts by area
+  area_counts <- data_frames[[i]] %>% 
+    group_by(W) %>% 
+    summarize(count = sum(count))
+  
+  # Join the counts to the original data frame
+  data_frames[[i]] <- data_frames[[i]] %>% 
+    left_join(area_counts, by = "W")
+  
+  # Save the updated data frame
+  assign(x = df_names[i], value = data_frames[[i]])
+}
+
+#8. Make proportion column
+
+# Use lapply to apply a function to each element of the list
+data_frames <- lapply(data_frames, function(df) {
+  library(dplyr)
+  # Calculate the proportion for each dataframe and sum only the rows in Area 23
+  df$Proportion <- (df$count.x / df$count.y)
+  # Remove the 'count' column
+  df$count <- NULL
+  # Return the modified data frame
+  return(df)
+})
+
+#use lapply to remove the count.x and count.y columns
+#data_frames <- lapply(data_frames, function(df) {
+ # df$count.x <- NULL
+  #df$count.y <- NULL
+  #return(df)
+#})
 
 
-ggplot(Area24_combo, aes(x=Time, y=Proportion, fill = Rating))+
-  geom_bar(position="stack", stat="identity")+
-  labs(x = "Rating Period", y = "Percentage") +
-  theme_Publication()+ 
-  theme(axis.text=element_text(size=14),
-        axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
-        axis.text.y=element_text(color="black")) +
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_x_discrete(limits = c("Current", "Future"), labels = c("Current \n (n = 680)","Future  \n (n = 680)"))+
-  scale_fill_manual(values = c("Very Low" = "forestgreen", "Low" = "yellowgreen", "Moderate"= "gold1","High" = "darkorange1", "Very High" = "red3", "Low Priority Data Gap" = "grey70", "High Priority Data Gap" = "grey30"),limits = c("Very High", "High", "Moderate", "High Priority Data Gap","Low","Very Low", "Low Priority Data Gap"))+
-  scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)
+# take dfs from list and save as new dfs
+CR <- data_frames[[1]]
+FR <- data_frames[[2]]
+CDG <- data_frames[[3]]
+FDG <- data_frames[[4]]
 
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-pdf(NULL)
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Area_24_Figures/", "Figure2",".jpeg"),
-       device = "jpeg",
-       width = 30,
-       height = 30,
-       units = "cm",
-       dpi = 300)
-dev.off() 
+#rename columns
+names(CR) <- c("Watershed","Area", "Rating", "Count","Total","Proportion")
+names(FR) <- c("Watershed","Area", "Rating", "Count","Total","Proportion")
+names(CDG) <- c("Watershed","Area", "Rating", "Count","Total","Proportion")
+names(FDG) <- c("Watershed","Area", "Rating", "Count","Total","Proportion")
+
+
+#add time column
+CR$Time <- rep("C", length(CR$Rating))
+FR$Time <- rep("F", length(FR$Rating)) 
+CR_FR<- rbind(CR,FR)
+
+#add time column
+CDG$Time <- rep("C", length(CDG$Rating))
+FDG$Time <- rep("F", length(FDG$Rating))
+CDG_FDG<- rbind(CDG,FDG)
+
+#determine if there are any NA values
+any(is.na(CR_FR))
+any(is.na(CDG_FDG))
+
+#remove rows with NA
+CR_FR <- CR_FR[complete.cases(CR_FR), ] 
+CDG_FDG <- CDG_FDG[complete.cases(CDG_FDG), ]
+
+#9. Plot for each area
+#factor High to Low
+CR_FR$Risk <- factor(CR_FR$Rating, levels = c("VH", "H", "M", "L", "VL"))
+CDG_FDG$Risk <- factor(CDG_FDG$Rating, levels = c("HPDG", "LPDG"))
+
+#rename dataframes
+Current_Risk_Future_Risk_All_Areas <- CR_FR
+Current_DG_Future_DG_All_Areas <- CDG_FDG
+
+#plot for CR and FR
+Area_names <- unique(Current_Risk_Future_Risk_All_Areas$Area)
+
+# iterate over each area in Area_names
+  for (area in Area_names) {
+    # filter the data frame to only include data for the current area
+    df_area <- filter(Current_Risk_Future_Risk_All_Areas, Area == area)
+
+    # create a plot for the filtered data frame
+    plot <- ggplot(df_area, aes(x= Time, y= Proportion, fill = Risk))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Watershed)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M" = "gold1", "H" = "darkorange1", "VH" = "red3", "HPDG" = "grey70", "LPDG" = "grey30"))+
+       scale_y_continuous(limits = c(0,1.01), breaks=seq(0,1.01,.25), labels = scales::percent)  
+
+
+    #save current plot
+    ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", area,"Percentage_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+  }
+
+#plot for CDG and FDG
+Area_names <- unique(Current_DG_Future_DG_All_Areas$Area)
+
+#iterate over each area in Area_names
+  for (area in Area_names) {
+    # filter the data frame to only include data for the current area
+    df_area <- filter(Current_DG_Future_DG_All_Areas, Area == area)
+
+    # create a plot for the filtered data frame
+    plot <- ggplot(df_area, aes(x= Time, y= Proportion, fill = Risk))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Watershed)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M" = "gold1", "H" = "darkorange1", "VH" = "red3", "HPDG" = "grey70", "LPDG" = "grey30"))+
+       scale_y_continuous(limits = c(0,1), breaks=seq(0,1,.25), labels = scales::percent)  
+
+
+    #save current plot
+    ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", area,"Percentage_DGs.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+  }
+
+#######Plot for counts by areas
+
+#plot for CR and FR
+Area_names <- unique(Current_Risk_Future_Risk_All_Areas$Area)
+
+# iterate over each area in Area_names
+  for (area in Area_names) {
+    # filter the data frame to only include data for the current area
+    df_area <- filter(Current_Risk_Future_Risk_All_Areas, Area == area)
+
+    # create a plot for the filtered data frame
+    plot <- ggplot(df_area, aes(x= Time, y= Count, fill = Risk))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Watershed)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M" = "gold1", "H" = "darkorange1", "VH" = "red3", "HPDG" = "grey70", "LPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,50), breaks=seq(0,50,5))
+
+
+    #save current plot
+    ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", area,"_Count_of_Risks.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+  }
+
+#plot for CDG and FDG
+Area_names <- unique(Current_DG_Future_DG_All_Areas$Area)
+
+#iterate over each area in Area_names
+  for (area in Area_names) {
+    # filter the data frame to only include data for the current area
+    df_area <- filter(Current_DG_Future_DG_All_Areas, Area == area)
+
+    # create a plot for the filtered data frame
+    plot <- ggplot(df_area, aes(x= Time, y= Count, fill = Risk))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Watershed)+
+      labs(x = "Rating Period", y = "Count") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M" = "gold1", "H" = "darkorange1", "VH" = "red3", "HPDG" = "grey70", "LPDG" = "grey30"))+
+            scale_y_continuous(limits = c(0,50), breaks=seq(0,50,5))
+
+    #save current plot
+    ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/All/", area,"_DGs.jpeg"),
+           device = "jpeg",
+           width = 30,
+           height = 30,
+           units = "cm",
+           dpi = 300)
+  }
+
+#summary table for CR and FR
+library(vtable)
+st(CR_FR, group = 'Area', group.long = FALSE)
+
+
 #Combined Current + Future
 Area24_combo<- Area24_combo %>%                               # Specify data frame
   group_by(Rating) %>%                         # Specify group indicator
@@ -289,7 +671,8 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
        height = 30,
        units = "cm",
        dpi = 300)
-dev.off() 
+dev.off()
+
 ##########Terminal Migration Current (1-15)######
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 1 & `FWRA$LF_ID` <= 15)
 VL <- c("Very Low")
