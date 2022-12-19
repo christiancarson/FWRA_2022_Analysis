@@ -620,7 +620,30 @@ Area_names <- unique(Current_DG_Future_DG_All_Areas$Area)
 
 #summary table for CR and FR
 library(vtable)
-st(CR_FR, group = 'Area', group.long = FALSE)
+colnames(Current_Risk_Future_Risk_All_Areas)
+
+Risk_Table <- Current_Risk_Future_Risk_All_Areas %>%
+  group_by(Area, Rating, Time) %>%
+  summarize(sums = sum(Count))
+
+data.frame(Risk_Table)
+
+Table <- Risk_Table %>%
+  group_by(Area) %>%
+  summarize(sums = sum(sums))
+
+summary(Risk_Table)
+
+DG_Table <- Current_DG_Future_DG_All_Areas %>%
+  group_by(Area, Rating) %>%
+  summarize(sums = sum(Count))
+data.frame(DG_Table)
+
+require(vcd)
+
+Risk_Table %>% as_tibble() %>% print(n=40)
+
+
 
 
 #Combined Current + Future
