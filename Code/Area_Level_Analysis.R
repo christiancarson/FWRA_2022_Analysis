@@ -619,7 +619,16 @@ Area_names <- unique(Current_DG_Future_DG_All_Areas$Area)
   }
 
 #summary table for CR and FR
-library(vtable)
+#Add time period row to CR
+CR <- CR %>%
+  mutate(Time = "Current")
+ colnames(CR) 
+#Add time period row to FR
+FR <- FR %>%
+  mutate(Time = "Future")
+#RBIND CR and FR
+Current_Risk_Future_Risk_All_Areas <- rbind(CR, FR)
+
 colnames(Current_Risk_Future_Risk_All_Areas)
 
 Risk_Table <- Current_Risk_Future_Risk_All_Areas %>%
@@ -629,20 +638,70 @@ Risk_Table <- Current_Risk_Future_Risk_All_Areas %>%
 data.frame(Risk_Table)
 
 Table <- Risk_Table %>%
-  group_by(Area) %>%
+  group_by(Area, Rating, Time) %>%
   summarize(sums = sum(sums))
+  
+#plot table clusteered by area
+Table <- data.frame(Table)
+#plot table clusteered by area
+Table %>% as_tibble() %>% print(n=40)
 
-summary(Risk_Table)
+colnames(Table)
+Table$sums <- as.numeric(Table$sums)
+
+
+
+#make stacked bar chart for each area that shows the count of each risk
+#label bars with values
+ggplot(Table, aes(x= Time, y=sums, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      geom_text(aes(label=sums), position=position_stack(vjust=0.5), size=3)+
+      labs(x = "Rating Period", y = "Percentage") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("VL" = "forestgreen", "L" = "yellowgreen", "M"= "gold1","H" = "darkorange1", "VH" = "red3"))+
+      scale_y_continuous(limits = c(0,300), breaks=seq(0,300,50))
+      #fix y axis values not showing up
+
+
+#summary table for CDG and FDG
+#Add time period row to CR
+CDG <- CDG %>%
+  mutate(Time = "Current")
+
+#Add time period row to FR
+FDG <- FDG %>%
+  mutate(Time = "Future")
+
+#RBIND CDG and FDG
+Current_DG_Future_DG_All_Areas <- rbind(CDG, FDG)
+
 
 DG_Table <- Current_DG_Future_DG_All_Areas %>%
-  group_by(Area, Rating) %>%
+  group_by(Area, Rating, Time) %>%
   summarize(sums = sum(Count))
-data.frame(DG_Table)
-
-require(vcd)
+DG_Table <- data.frame(DG_Table)
 
 Risk_Table %>% as_tibble() %>% print(n=40)
 
+DG_Table$sums <- as.numeric(DG_Table$sums)
+
+library(ggplot2)
+#make stacked bar chart for each area that shows the count of each risk
+ggplot(DG_Table, aes(x= Time, y=sums, fill = Rating))+
+      geom_bar(position="stack", stat="identity")+ facet_grid(~ Area)+
+      geom_text(aes(label=sums), position=position_stack(vjust=0.5), size=3)+
+      labs(x = "Rating Period", y = "Percentage") +
+      theme_Publication()+ 
+      theme(axis.text=element_text(size=14),
+            axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
+            axis.text.y=element_text(color="black"))+
+      theme(plot.title = element_text(hjust = 0.5)) +
+      scale_fill_manual(values = c("LPDG" = "grey70", "HPDG" = "grey30"))+
+      scale_y_continuous(limits = c(0,500), breaks=seq(0,500,50))
 
 
 
