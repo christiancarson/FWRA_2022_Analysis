@@ -112,7 +112,7 @@ data.path <- paste(wd, "/", "Data", sep = "")
 
 #####you will need to find the exact path of the FINAL_FWRA_RESULTS_ALL_AREAS_MASTER path on our sharepoint and paste it below
                        
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
@@ -121,6 +121,7 @@ FWRA <- subset(FWRA, LF != "23" & LF != "24")
 watersheds <- c(print(unique(FWRA$W)))
   
  options(ggrepel.max.overlaps = Inf)
+ require(ggrepel)
 for (i in watersheds) {
   
 Sarita <- subset(FWRA, FWRA$W == i)
@@ -148,23 +149,25 @@ set.seed(42)
 ggplot(longData,aes(x = FR, y = CR, fill = TR))+ 
   theme_classic()+ 
   geom_tile()+
-  scale_fill_gradientn(name = "Total Risk", colours = cols(length(mycols)), 
-values = scaled_val, 
-breaks=c(0,6.5,12.5,18.75,25),
-labels=c("VL","L","M","H","VH"),
-                       limits=c(0,25))+
+  scale_fill_gradientn(name = element_text(size=20, face="bold", "Total Risk"), 
+                     colours = cols(length(mycols)), 
+                     values = scaled_val, 
+                     breaks=c(0,6.5,12.5,18.75,25),
+                     labels=c("VL","L","M","H","VH"),
+                     limits=c(0,25))+
    guides(fill = guide_colorbar(barheight = 5, barwidth = 2, direction = "vertical"))+
  theme(legend.position = "right") +
+ theme(axis.title=element_text(size=16, face="bold"))+
  coord_fixed()+ 
-  geom_point(data = Sarita, aes(), size = 3, color = "white") +
+  geom_point(data = Sarita, aes(), size = 3, color = "#000000") +
   geom_label_repel(data = Sarita,
     aes(label = LF, fill = TR),
-    fontface = 'bold', color = 'white',size = 5,
+    fontface = 'bold', color = '#000000',size = 4,
     box.padding = unit(0.35, "lines"),
     point.padding = unit(0.5, "lines"),
-    segment.color = 'white', max.iter = Inf) +
+    segment.color = '#000000', max.iter = Inf, force = 5, direction = "both", min.segment.length = 0) +
   labs(x = "Future Risk", y = "Current Risk") +
-  theme(axis.text=element_text(size=14),
+  theme(axis.text=element_text(size=14, face="bold"),
         axis.text.x=element_text(angle = 45, vjust = 0.8, hjust = .9, color = "black"),
         axis.text.y=element_text(color="black")) +
   theme(plot.title = element_text(hjust = 0.5))+ 
@@ -250,7 +253,7 @@ gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
-FWRA <- subset(FWRA, LF != "23" & LF != "24")
+FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
   FWRA<-subset(FWRA, CR!= 1 & CR!= 2 & CR!= 3 & CR!= 4 & CR!= 5 & FR!= 1 & FR!= 2 & FR!= 3 & FR!= 4 & FR!= 5)
 
 FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
@@ -286,9 +289,12 @@ SARITA_NUMERIC <- SARITA_NUMERIC %>%
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "W")] <- "Watershed"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "TR")] <- "Total Risk"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current Risk"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current and Future Risk"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FR")] <- "Future Risk"
 unique(SARITA_NUMERIC$LF)
+
+#remove columns Total Risk and Future Risk
+SARITA_NUMERIC <- SARITA_NUMERIC[, -c(4,6)]
 
   SARITA_NUMERIC %>%
     head(68) %>%
