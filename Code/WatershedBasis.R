@@ -112,13 +112,18 @@ data.path <- paste(wd, "/", "Data", sep = "")
 
 #####you will need to find the exact path of the FINAL_FWRA_RESULTS_ALL_AREAS_MASTER path on our sharepoint and paste it below
                        
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
 
-# time to upload the datas
-watersheds <- c(print(unique(FWRA$W)))
+#use dyplyr to make a table that lists all the unique watersheds in the data and what A they are in
+watersheds <- FWRA %>% 
+  group_by(W) %>% 
+  summarise(A = unique(A))
+
+#save watersheds as a csv
+write.csv(watersheds, file = "watersheds.csv")
   
  options(ggrepel.max.overlaps = Inf)
  require(ggrepel)
@@ -190,7 +195,7 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 # time to upload the datas
 ####Risk Rankings
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF != "23" & LF != "24")
@@ -198,7 +203,7 @@ FWRA<-subset(FWRA, CR!= 0 & CR!= -1 & FR!= 0 & FR!= -1)
 
 FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
 
-FWRA <- subset(FWRA, LF_Name != "LF22: Mortality or fitness reduction resulting from frequent and higher peak flows causing redd scour" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
 
 watersheds <- c(print(unique(FWRA$W)))
@@ -250,7 +255,7 @@ gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
 # time to upload the datas
 ####Data Gaps
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FINAL_FWRA_RESULTS_ALL_AREAS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
 FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
@@ -258,7 +263,7 @@ FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
 
 FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
 
-FWRA <- subset(FWRA, LF_Name != "LF22: Mortality or fitness reduction resulting from frequent and higher peak flows causing redd scour" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
 
 watersheds <- c(print(unique(FWRA$W)))
@@ -289,12 +294,12 @@ SARITA_NUMERIC <- SARITA_NUMERIC %>%
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "W")] <- "Watershed"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "TR")] <- "Total Risk"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current and Future Risk"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current and Future Rating"
 colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FR")] <- "Future Risk"
 unique(SARITA_NUMERIC$LF)
 
-#remove columns Total Risk and Future Risk
-SARITA_NUMERIC <- SARITA_NUMERIC[, -c(4,6)]
+#remove columns Watershed, Total Risk, Rank, and Future Risk
+SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,3,4,6)]
 
   SARITA_NUMERIC %>%
     head(68) %>%
@@ -302,3 +307,5 @@ SARITA_NUMERIC <- SARITA_NUMERIC[, -c(4,6)]
     gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/", print(i),".docx"))
   
 }
+
+#
