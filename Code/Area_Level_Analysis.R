@@ -1017,7 +1017,8 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
        height = 30,
        units = "cm",
        dpi = 300)
-dev.off() 
+dev.off()
+
 ###############Freshwater Rearing (30-46)##############
 ###Freshwater Rearing Current
 Area24_Terminal_C <- Area24_C %>% filter(`FWRA$LF_ID` >= 30 & `FWRA$LF_ID` <= 46)
@@ -1185,7 +1186,6 @@ colnames(Area24_Terminal_C)[which(names(Area24_Terminal_C) == "VeryHigh")] <- "V
 colnames(Area24_Terminal_C)[which(names(Area24_Terminal_C) == "VeryLow")] <- "Very Low"
 colnames(Area24_Terminal_C)[which(names(Area24_Terminal_C) == "HighPriorityDataGap")] <- "High Priority Data Gap"
 colnames(Area24_Terminal_C)[which(names(Area24_Terminal_C) == "LowPriorityDataGap")] <- "Low Priority Data Gap"
-
 
 require(reshape2)
 Area24_Terminal_C <- tidyr::pivot_longer(Area24_Terminal_C, cols=c("Very Low","Low", "Moderate","High","Very High","Low Priority Data Gap","High Priority Data Gap"), names_to='Rating', 
@@ -1735,8 +1735,6 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
        units = "cm",
        dpi = 300)
 dev.off() 
-
-
 
 ##########DG Current & Future Stacked Bar########
 Low_DG_C <- rbind(Area24_Terminal_CLPDG,Area24_Incubation_CLPDG,Area24_EarlyRearingRiver_CLPDG,Area24_EarlyRearingEstuary_CLPDG,Area24_BiologicalCharacteristicsGenetics_CLPDG)

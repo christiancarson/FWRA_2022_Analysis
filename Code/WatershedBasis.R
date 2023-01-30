@@ -250,7 +250,7 @@ SARITA_NUMERIC %>%
 gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_Risk_Tables/", print(i),".docx"))
 
 }
-
+``
 ###Reload for tables######
 # time to upload the datas
 ####Data Gaps
@@ -308,4 +308,38 @@ SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,3,4,6)]
   
 }
 
-#
+
+
+####Data Gaps Counts
+
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+head(FWRA)
+
+FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
+  FWRA<-subset(FWRA, CR!= 1 & CR!= 2 & CR!= 3 & CR!= 4 & CR!= 5 & FR!= 1 & FR!= 2 & FR!= 3 & FR!= 4 & FR!= 5)
+
+FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+
+FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+unique(FWRA$LF_Name)
+
+watersheds <- c(print(unique(FWRA$W)))
+
+#change all 0s to LPDG and -1s to HPDG
+FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
+FWRA$CR[FWRA$CR=="0"]<-"LPDG"
+FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
+FWRA$FR[FWRA$FR=="0"]<-"LPDG"
+
+#using dplyr count the number of times each risk value appears in each watershed
+DG <- FWRA %>%
+  group_by(W) %>%
+  count(CR, FR) %>%
+  ungroup()
+
+
+
+
+
+#Save the table
+write.csv(DG, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/DG_Table_Breakdown.csv")
