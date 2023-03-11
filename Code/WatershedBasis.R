@@ -1,35 +1,29 @@
 ######Intro#######
-#Hi team, welcome to our R script for creating plots for Area 23. To follow along
+#Hi team, welcome to our R script for creating plots for Area 23.
 #view my comments in the "#" regions, these will provide you a guide for what to
 #change in your own analysis
-
+print("Hello World")
 #GUIDE#
-#Areas where you will need to make changes are indicated with "#$#", copy 
+#Areas where you will need to make changes are indicated with "#$#", copy
 #and paste this text and paste it into the find function (command F), to view
 #all the areas where you need to make changes
 
-#whenever begging an R script, make sure to write down key infromation to the script
+#whenever begging an R script, make sure to write down key infromation
 #such as its title, author, date updated, etc. Example below for this script:
-
 #Title: Area 23 Plots Template
 #Author: Critty (Christian) Carson
 #Last updated : August 19th, 2022
-#Description : Summaries of NUSEDS escapement, hydromet data, 
+#Description : Summaries of NUSEDS escapement, hydromet data,
 
-#all scripts should start with installing packages, which are basically mini programs
-#that you can add within R to help you do analyses or make specific kinds of plots
+#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble",
+# "car","reshape2","epitools", "readxl", "tidyverse","arsenal"))
+#install.packages(c("ggplot2", "patchwork", "palmerpenguins"))
 
-#the packages you need are below, unhashtag the sentance below to install packages 
-#hit cmd + enter to run this code or highlight it and click run in the top right corner
-
-#install.packages(c("boot", "MASS","plyr","dplyr", "plot2", "tibble", "car", "reshape2",
-#                  "epitools", "readxl", "tidyverse","arsenal")))
 #install.packages(c("gt","gtExtras"))
 #now we need to load all the packages into our r script, this is done with the
 #function, library(). For instance, if we want to load the package "boot", we would
 #run the function below. Now, highlight all the functions below in a row and run them
 #remotes::install_github("ManuelHentschel/vscDebugger")
-
 library(boot)
 library(MASS)
 library(plyr)
@@ -42,9 +36,7 @@ library(readxl)
 library(tidyverse)
 library(readr)
 library(arsenal)
-#source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
-#install.packages(c("ggplot2", "patchwork", "palmerpenguins"))
-library(tidyverse)
+source("https://raw.githubusercontent.com/koundy/ggplot_theme_Publication/master/ggplot_theme_Publication-2.R")
 library(patchwork)
 library(palmerpenguins)
 library(viridis)
@@ -52,9 +44,8 @@ library(gt)
 library(gtExtras)
 library(RColorBrewer)
 library(reshape2)
-library(dplyr)
-library(ggplot2)
 library(knitr)
+#install.packages("vtable")
 library(vtable)
 #install.packages("ggrepel")
 library(ggrepel)
@@ -71,12 +62,13 @@ library(ggrepel)
 #--------------any libraries needed are loaded and displayed below--------------
 #
 library(dplyr)
-library("zoo")
+library(zoo)
+library(kableExtra)
 #
 #--------------make project folders and folder paths----------------------------
 
 library(httpgd)
-
+hgd()
 hgd_browse()
 
 wd <- getwd()  # working directory
@@ -342,4 +334,271 @@ DG <- FWRA %>%
 
 
 #Save the table
-write.csv(DG, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/DG_Table_Breakdown.csv")
+write.csv(FWRA, file = "/Users/critty/Desktop/Dekstop/GitHub/
+FWRA_2022_Analysis/Figures/Watershed_DG_Tables/DG_Table_Breakdown.csv")
+
+
+#################### Risk Table ####################
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+head(FWRA)
+
+FWRA <- subset(FWRA, LF != "23" & LF != "24")
+
+FWRA <- select(FWRA,W,LF,CR,FR)
+
+FWRA$CR <- as.character(FWRA$CR)
+FWRA$FR <- as.character(FWRA$FR)
+
+#remove all rows with a 0 or -1 in the CR or FR columns
+FWRA <- subset(FWRA, CR!= 0 & CR!= -1 & FR!= 0 & FR!= -1)
+
+#change all numeric values to character
+FWRA$CR[FWRA$CR=="1"]<-"VL"
+FWRA$CR[FWRA$CR=="2"]<-"L"
+FWRA$CR[FWRA$CR=="3"]<-"M"
+FWRA$CR[FWRA$CR=="4"]<-"H"
+FWRA$CR[FWRA$CR=="5"]<-"VH"
+
+FWRA$FR[FWRA$FR=="1"]<-"VL"
+FWRA$FR[FWRA$FR=="2"]<-"L"
+FWRA$FR[FWRA$FR=="3"]<-"M"
+FWRA$FR[FWRA$FR=="4"]<-"H"
+FWRA$FR[FWRA$FR=="5"]<-"VH"
+
+
+library(dplyr)
+
+unique(FWRA$CR)
+unique(FWRA$FR)
+
+sorted <- FWRA %>%
+mutate(VH = ifelse(CR %in% c("VH"), 1, 0),
+VL = ifelse(CR %in% c("VL"), 1, 0),
+H = ifelse(CR %in% c("H"), 1, 0),
+M = ifelse(CR %in% c("M"), 1, 0),
+L = ifelse(CR %in% c("L"), 1, 0),
+VH_FR = ifelse(FR %in% c("VH"), 1, 0),
+VL_FR = ifelse(FR %in% c("VL"), 1, 0),
+H_FR = ifelse(FR %in% c("H"), 1, 0),
+M_FR = ifelse(FR %in% c("M"), 1, 0),
+L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
+group_by(LF) %>%
+summarise(VH = sum(VH),VH_FR = sum(VH_FR),
+VL = sum(VL),VL_FR = sum(VL_FR),
+H = sum(H),H_FR = sum(H_FR),
+M = sum(M),M_FR = sum(M_FR),
+L = sum(L),L_FR = sum(L_FR))%>%
+arrange(LF)
+print(sorted, n = Inf)
+
+#remove future columns
+current <- select(sorted, -VH_FR, -VL_FR, -H_FR, -M_FR, -L_FR)
+current <- current%>%
+arrange(desc(VH), desc(H), desc(M),desc(L), desc(VL))
+
+#order columns by VH, H, M, L, VL
+current <- current %>%
+  select(LF, VH, H, M, L, VL)
+
+print(current)
+
+#future
+future <- select(sorted, -VH, -VL, -H, -M, -L)
+future <- future%>%
+arrange(desc(VH_FR), desc(H_FR), desc(M_FR),desc(L_FR), desc(VL_FR))
+
+#order columns by VH, H, M, L, VL
+future <- future %>%
+  select(LF, VH_FR, H_FR, M_FR, L_FR, VL_FR)
+
+# assign current lf names to a variable
+v1 <- current$LF
+# assign future lf names to a variable
+v2 <- future$LF
+
+# Set a value for o
+o <- 0.05
+
+# Create a data frame with x, x1, y, and g columns
+DF <- data.frame(x = c(rep(1, length(v1)), rep(2, length(v2))),
+                 x1 = c(rep(1 + o, length(v1)), rep(2 - o, length(v2))),
+                 y = c(rev(seq_along(v1)), rev(seq_along(v2))),
+                 g = c(v1, v2))
+
+# Load ggplot2 and grid libraries
+library(ggplot2)
+library(grid)
+
+# Create a ggplot object with DF as data, x as x-axis, y as y-axis, and g as group
+p <- ggplot(DF, aes(x=x, y=y, group=g, label=g))
+
+# Add a path to the plot with x1 as x-axis and green color
+p <- p + geom_path(aes(x=x1), arrow = arrow(length = unit(0.02,"npc")), 
+            size=1, color="green")
+
+# Add text to the plot
+p <- p + geom_text(size=10)
+
+# Remove all non-essential elements of the theme
+p <- p + theme_minimal() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank())
+
+# Display the plot
+p
+
+#save the table as a csv
+write.csv(sorted, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/Overall_Table.csv")
+
+overall <- data.frame(sorted$LF_Name)
+
+#save the table as a csv
+write.csv(overall, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/Overall_Considerable_Table.csv")
+
+#################### Considerable w/ HPDG Table ####################
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+head(FWRA)
+
+FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
+
+FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+
+FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+
+FWRA$CR <- as.character(FWRA$CR)
+FWRA$FR <- as.character(FWRA$FR)
+
+
+#change all numeric values to character
+FWRA$CR[FWRA$CR=="1"]<-"VL"
+FWRA$CR[FWRA$CR=="2"]<-"L"
+FWRA$CR[FWRA$CR=="3"]<-"M"
+FWRA$CR[FWRA$CR=="4"]<-"H"
+FWRA$CR[FWRA$CR=="5"]<-"VH"
+
+FWRA$FR[FWRA$FR=="1"]<-"VL"
+FWRA$FR[FWRA$FR=="2"]<-"L"
+FWRA$FR[FWRA$FR=="3"]<-"M"
+FWRA$FR[FWRA$FR=="4"]<-"H"
+FWRA$FR[FWRA$FR=="5"]<-"VH"
+
+FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
+FWRA$CR[FWRA$CR=="0"]<-"LPDG"
+FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
+FWRA$FR[FWRA$FR=="0"]<-"LPDG"
+unique(FWRA$CR)
+unique(FWRA$FR)
+library(dplyr)
+
+unique(FWRA$CR)
+unique(FWRA$FR)
+
+sorted <- FWRA %>%
+mutate(HPDG = ifelse(CR %in% c("HPDG"), 1, 0),
+LPDG = ifelse(CR %in% c("LPDG"), 1, 0),
+VH = ifelse(CR %in% c("VH"), 1, 0),
+VL = ifelse(CR %in% c("VL"), 1, 0),
+H = ifelse(CR %in% c("H"), 1, 0),
+M = ifelse(CR %in% c("M"), 1, 0),
+L = ifelse(CR %in% c("L"), 1, 0),
+HPDG_FR = ifelse(FR %in% c("HPDG"), 1, 0),
+LPDG_FR = ifelse(FR %in% c("LPDG"), 1, 0),
+VH_FR = ifelse(FR %in% c("VH"), 1, 0),
+VL_FR = ifelse(FR %in% c("VL"), 1, 0),
+H_FR = ifelse(FR %in% c("H"), 1, 0),
+M_FR = ifelse(FR %in% c("M"), 1, 0),
+L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
+group_by(LF_Name) %>%
+summarise(LPDG_sum = sum(LPDG, LPDG_FR),
+VL_sum = sum(VL, VL_FR),
+C_sum = sum(VH, VH_FR,H, H_FR,M, M_FR,HPDG, HPDG_FR),
+L_sum = sum(L, L_FR)) %>%
+arrange(LF_Name)
+print(sorted, n = Inf)
+
+sorted <- sorted %>%
+arrange(desc(C_sum),desc(L_sum), desc(VL_sum),desc(LPDG_sum))
+print(sorted)
+
+
+considerable_w_HPDG <- data.frame(sorted$LF_Name)
+#################### Considerable w/o HPDG Table ####################
+FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+head(FWRA)
+
+FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
+
+FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+
+FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
+
+FWRA$CR <- as.character(FWRA$CR)
+FWRA$FR <- as.character(FWRA$FR)
+
+
+#change all numeric values to character
+FWRA$CR[FWRA$CR=="1"]<-"VL"
+FWRA$CR[FWRA$CR=="2"]<-"L"
+FWRA$CR[FWRA$CR=="3"]<-"M"
+FWRA$CR[FWRA$CR=="4"]<-"H"
+FWRA$CR[FWRA$CR=="5"]<-"VH"
+
+FWRA$FR[FWRA$FR=="1"]<-"VL"
+FWRA$FR[FWRA$FR=="2"]<-"L"
+FWRA$FR[FWRA$FR=="3"]<-"M"
+FWRA$FR[FWRA$FR=="4"]<-"H"
+FWRA$FR[FWRA$FR=="5"]<-"VH"
+
+FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
+FWRA$CR[FWRA$CR=="0"]<-"LPDG"
+FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
+FWRA$FR[FWRA$FR=="0"]<-"LPDG"
+unique(FWRA$CR)
+unique(FWRA$FR)
+library(dplyr)
+
+unique(FWRA$CR)
+unique(FWRA$FR)
+
+sorted <- FWRA %>%
+mutate(HPDG = ifelse(CR %in% c("HPDG"), 1, 0),
+LPDG = ifelse(CR %in% c("LPDG"), 1, 0),
+VH = ifelse(CR %in% c("VH"), 1, 0),
+VL = ifelse(CR %in% c("VL"), 1, 0),
+H = ifelse(CR %in% c("H"), 1, 0),
+M = ifelse(CR %in% c("M"), 1, 0),
+L = ifelse(CR %in% c("L"), 1, 0),
+HPDG_FR = ifelse(FR %in% c("HPDG"), 1, 0),
+LPDG_FR = ifelse(FR %in% c("LPDG"), 1, 0),
+VH_FR = ifelse(FR %in% c("VH"), 1, 0),
+VL_FR = ifelse(FR %in% c("VL"), 1, 0),
+H_FR = ifelse(FR %in% c("H"), 1, 0),
+M_FR = ifelse(FR %in% c("M"), 1, 0),
+L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
+group_by(LF_Name) %>%
+summarise(LPDG_sum = sum(LPDG, LPDG_FR),
+HPDG_sum = sum(HPDG, HPDG_FR),
+VL_sum = sum(VL, VL_FR),
+C_sum = sum(VH, VH_FR,H, H_FR,M, M_FR),
+L_sum = sum(L, L_FR)) %>%
+arrange(LF_Name)
+print(sorted, n = Inf)
+
+sorted <- sorted %>%
+arrange(desc(C_sum),desc(HPDG_sum),desc(L_sum), desc(VL_sum),desc(LPDG_sum))
+print(sorted)
+
+considerable_wo_HPDG <- data.frame(sorted$LF_Name)
+
+
+#combine the tables
+overall <- cbind(overall, considerable_w_HPDG, considerable_wo_HPDG)
+
+#add column for row numbers
+overall <- cbind(overall, row.names(overall))
+print(overall)
+
+#save as csv
+write.csv(overall, file = "/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/Overall.csv")
