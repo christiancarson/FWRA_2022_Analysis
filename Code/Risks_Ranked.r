@@ -99,7 +99,6 @@ FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="-1"]<-"HPDG"
 
 ####Risk Ranked Across All LFs and Spatial Scales####
 # remove HPDG and LPDG from data
-FWRA <- subset(FWRA, Current_Bio_Risk != "HPDG" & Current_Bio_Risk != "LPDG" & Future_Bio_Risk != "HPDG" & Future_Bio_Risk != "LPDG")
 library(tidyr)
 library(dplyr)
 
@@ -109,7 +108,7 @@ FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk==""]<-"0"
 
 
 
-# Add the add_missing_columns function
+# Define a function to add missing columns to a data frame and fill them with 0s
 add_missing_columns <- function(df, columns) {
   for (column in columns) {
     if (!column %in% colnames(df)) {
@@ -118,51 +117,92 @@ add_missing_columns <- function(df, columns) {
   }
   return(df)
 }
+
+# Define a function to process filtered data: calculate proportions, sort risks, and save to a CSV file
 process_filtered_data <- function(filtered_data, risk_column, file_suffix) {
-  total_risk_proportions <- filtered_data %>%
-    count(LF_Number, !!sym(risk_column)) %>%
+  risk_summary <- filtered_data %>%
+    mutate(VH = ifelse(!!sym(risk_column) %in% c("VH"), 1, 0),
+           H = ifelse(!!sym(risk_column) %in% c("H"), 1, 0),
+           M = ifelse(!!sym(risk_column) %in% c("M"), 1, 0),
+           L = ifelse(!!sym(risk_column) %in% c("L"), 1, 0),
+           VL = ifelse(!!sym(risk_column) %in% c("VL"), 1, 0), 
+           LPDG = ifelse(!!sym(risk_column) %in% c("LPDG"), 1, 0),
+            HPDG = ifelse(!!sym(risk_column) %in% c("HPDG"), 1, 0)) %>%
+            
     group_by(LF_Number) %>%
-    mutate(Prop_Total = n / sum(n)) %>%
-    ungroup()
+    summarise(VH_total_count = sum(VH),
+              H_total_count = sum(H),
+              M_total_count = sum(M),
+              L_total_count = sum(L),
+              VL_total_count = sum(VL),
+              LPDG_total_count = sum(LPDG),
+              HPDG_total_count = sum(HPDG),
+              total_count = n()) %>% # Count the total number of rows in the filtered_data
+    mutate(VH_total_prop = VH_total_count / total_count,
+           H_total_prop = H_total_count / total_count,
+           M_total_prop = M_total_count / total_count,
+           L_total_prop = L_total_count / total_count,
+           VL_total_prop = VL_total_count / total_count,
+           LPDG_total_prop = LPDG_total_count / total_count,
+            HPDG_total_prop = HPDG_total_count / total_count)
 
-  risk_summary <- total_risk_proportions %>%
-    group_by(LF_Number, !!sym(risk_column)) %>%
-    summarise(total_prop = sum(Prop_Total), total_count = sum(n)) %>%
-    pivot_wider(names_from = !!sym(risk_column), values_from = c(total_prop, total_count), values_fill = 0)
+  # Sort the risk summary data frame by the highest proportion for each risk level in the order of risk levels
+  sorted_risks <- risk_summary %>%
+    arrange(desc(VH_total_prop), desc(H_total_prop), desc(M_total_prop), desc(L_total_prop), desc(VL_total_prop))
 
-  if (nrow(risk_summary) > 0) {
-    risk_summary <- add_missing_columns(risk_summary, c("VH_total_prop", "H_total_prop", "M_total_prop", "L_total_prop", "VL_total_prop", "VH_total_count", "H_total_count", "M_total_count", "L_total_count", "VL_total_count"))
+  # Print the sorted risks data frame to the console
+  cat("\nSorted Risks for", file_suffix, ":\n")
+  print(sorted_risks)
 
-    # Ungroup the dataframe before arranging
-    risk_summary <- risk_summary %>% ungroup()
-
-    risk_summary_before_arrange <- risk_summary %>%
-  ungroup()
-
-print(risk_summary_before_arrange)
-
-    sorted_risks <- risk_summary %>%
-      arrange(desc(VH_total_prop), desc(H_total_prop), desc(M_total_prop), desc(L_total_prop), desc(VL_total_prop), desc(LF_Number))
-
-    # Save the results to a CSV file
-    write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
-    return(sorted_risks) # Return the sorted_risks dataframe
-  } else {
-    cat("No data for", file_suffix, "\n")
-    return(NULL)
-  }
-  manually_sorted_risks <- risk_summary_before_arrange %>%
-  arrange(desc(VH_total_prop), desc(H_total_prop), desc(M_total_prop), desc(L_total_prop), desc(VL_total_prop))
-
-print(manually_sorted_risks)
+  # Save the sorted risks data frame to a CSV file
+  write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
 }
-for (area in unique_areas) {
-  filtered_data <- FWRA %>%
-    filter(Area == area)
-  print(paste("Area:", area))
-  print(filtered_data)  # Add this line to print filtered_data
-  sorted_risks <- process_filtered_data(filtered_data, "Future_Bio_Risk", paste("Area_Future", area, sep="_"))
-  if (!is.null(sorted_risks)) {
-    print(sorted_risks)
-  }
-}
+
+
+# Get unique values for LF_Number, CU_ACRO, Area, and SYSTEM_SITE
+unique_lf_numbers <- unique(FWRA$LF_Number)
+unique_cu_acros <- unique(FWRA$CU_ACRO)
+unique_areas <- unique(FWRA$Area)
+unique_system_sites <- unique(FWRA$SYSTEM_SITE)
+
+# Loop for CU_ACRO current risk
+    for (cu_acro in unique_cu_acros) {
+      filtered_data <- FWRA %>%
+        filter(CU_ACRO == cu_acro)
+      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("CU_ACRO_Current", cu_acro, sep="_"))
+    }
+
+# Loop for CU_ACRO future risk
+    for (cu_acro in unique_cu_acros) {
+      filtered_data <- FWRA %>%
+        filter(CU_ACRO == cu_acro)
+      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("CU_ACRO_Future", cu_acro, sep="_"))
+    }
+
+# Loop for Area current risk
+    for (area in unique_areas) {
+      filtered_data <- FWRA %>%
+        filter(Area == area)
+      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("Area_Current", area, sep="_"))
+    }
+
+# Loop for Area future risk
+    for (area in unique_areas) {
+      filtered_data <- FWRA %>%
+        filter(Area == area)
+      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("Area_Future", area, sep="_"))
+    }
+
+# Loop for SYSTEM_SITE current risk
+    for (system_site in unique_system_sites) {
+      filtered_data <- FWRA %>%
+        filter(SYSTEM_SITE == system_site)
+      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("SYSTEM_SITE_Current", system_site, sep="_"))
+    }
+
+# Loop for SYSTEM_SITE future risk
+    for (system_site in unique_system_sites) {
+      filtered_data <- FWRA %>%
+        filter(SYSTEM_SITE == system_site)
+      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SYSTEM_SITE_Future", system_site, sep="_"))
+    }
