@@ -61,12 +61,14 @@ figures.path <- paste(wd, "/", folders[2], sep = "")
 data.path <- paste(wd, "/", "Data", sep = "")
 
 # time to upload the datas
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER_09.12.2022.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 
+
+colnames(FWRA)
 #6. Clean data
 #Subset data that is not needed
 
-FWRA <- subset(FWRA, LF != 23 & LF != 24)
+FWRA <- subset(FWRA, LF_Number != 23 & LF_Number != 24)
 
 #6. Add columns
 

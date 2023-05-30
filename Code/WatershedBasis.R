@@ -2,7 +2,6 @@
 #Hi team, welcome to our R script for creating plots for Area 23.
 #view my comments in the "#" regions, these will provide you a guide for what to
 #change in your own analysis
-print("Hello World")
 #GUIDE#
 #Areas where you will need to make changes are indicated with "#$#", copy
 #and paste this text and paste it into the find function (command F), to view
@@ -69,7 +68,6 @@ library(kableExtra)
 
 library(httpgd)
 hgd()
-hgd_browse()
 
 wd <- getwd()  # working directory
 
@@ -104,29 +102,33 @@ data.path <- paste(wd, "/", "Data", sep = "")
 
 #####you will need to find the exact path of the FINAL_FWRA_RESULTS_ALL_AREAS_MASTER path on our sharepoint and paste it below
                        
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
-FWRA <- subset(FWRA, LF != "23" & LF != "24")
+colnames(FWRA)
+FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
+
+#subset for only indicator systems
+FWRA <- subset(FWRA, FWRA_CONDUCTED == "Y")
+unique(FWRA$SYSTEM_SITE)
 
 #use dyplyr to make a table that lists all the unique watersheds in the data and what A they are in
-watersheds <- FWRA %>% 
-  group_by(W) %>% 
-  summarise(A = unique(A))
+watersheds <- c(print(unique(FWRA$SYSTEM_SITE)))
+
 
 #save watersheds as a csv
 write.csv(watersheds, file = "watersheds.csv")
   
  options(ggrepel.max.overlaps = Inf)
  require(ggrepel)
-for (i in watersheds) {
-  
-Sarita <- subset(FWRA, FWRA$W == i)
 
-Sarita<-subset(Sarita, CR!= 0 & CR!= -1)
-FWRA$CR <- as.numeric(FWRA$CR)
-FWRA$FR <- as.numeric(FWRA$FR)
-FWRA$TR <- as.numeric(FWRA$TR)
+for (i in watersheds) {
+Sarita <- subset(FWRA, FWRA$SYSTEM_SITE == i)
+
+Sarita<-subset(Sarita, Current_Bio_Risk!= 0 & Current_Bio_Risk!= -1)
+FWRA$Current_Bio_Risk <- as.numeric(FWRA$Current_Bio_Risk)
+FWRA$Future_Bio_Risk <- as.numeric(FWRA$Future_Bio_Risk)
+FWRA$Total_Bio_Risk <- as.numeric(FWRA$Total_Bio_Risk)
 
 library(vtable)
 library(RColorBrewer)
@@ -136,14 +138,14 @@ library(ggrepel)
 
 myData <- matrix(c(2,2,3,3,3,1,2,2,3,3,1,1,2,2,3,1,1,2,2,2,1,1,1,1,2), nrow = 5, ncol = 5, byrow = TRUE)
 longData <- reshape2::melt(myData)
-colnames(longData) <- c("CR", "FR", "TR")
-longData <- mutate(longData, TR = CR * FR)
+colnames(longData) <- c("Current_Bio_Risk", "Future_Bio_Risk", "Total_Bio_Risk")
+longData <- mutate(longData, Total_Bio_Risk = Current_Bio_Risk * Future_Bio_Risk)
 mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
 cols <- colorRampPalette(mycols)
 myvals <- c(0,6.5,12.5,18.75,25)
 scaled_val <- scales::rescale(myvals, 0:1)
 set.seed(42)
-ggplot(longData,aes(x = FR, y = CR, fill = TR))+ 
+myplot <- ggplot(longData,aes(x = Future_Bio_Risk, y = Current_Bio_Risk, fill = Total_Bio_Risk))+ 
   theme_classic()+ 
   geom_tile()+
   scale_fill_gradientn(name = element_text(size=20, face="bold", "Total Risk"), 
@@ -158,7 +160,7 @@ ggplot(longData,aes(x = FR, y = CR, fill = TR))+
  coord_fixed()+ 
   geom_point(data = Sarita, aes(), size = 3, color = "#000000") +
   geom_label_repel(data = Sarita,
-    aes(label = LF, fill = TR),
+    aes(label = LF_Number, fill = Total_Bio_Risk),
     fontface = 'bold', color = '#000000',size = 4,
     box.padding = unit(0.35, "lines"),
     point.padding = unit(0.5, "lines"),
@@ -171,9 +173,8 @@ ggplot(longData,aes(x = FR, y = CR, fill = TR))+
   scale_x_continuous(breaks = c(1,2,3,4,5),labels = c("VL","L","M","H","VH"))+
   scale_y_continuous(breaks = c(1,2,3,4,5),labels = c("VL","L","M","H","VH")) 
 
-  
-#Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
-ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_Risks/", print(i),".jpeg"),
+  #Save the plot, define your folder location as "/Users/user/Documents/GitHub/FWRA_2022_Analysis/Figures"
+ggsave(filename = paste0("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Figures/Watershed_Risks/", print(i),".jpeg"),
        device = "jpeg",
        width = 30,
        height = 30,
@@ -181,114 +182,123 @@ ggsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysi
        dpi = 300)
 
 
+
+
 }
+
+
+
 
 ###Reload for tables######
 # time to upload the datas
 ####Risk Rankings
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
-FWRA <- subset(FWRA, LF != "23" & LF != "24")
-FWRA<-subset(FWRA, CR!= 0 & CR!= -1 & FR!= 0 & FR!= -1)
+FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
+FWRA<-subset(FWRA, Current_Bio_Risk!= 0 & Current_Bio_Risk!= -1 & Future_Bio_Risk!= 0 & Future_Bio_Risk!= -1)
 
-FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+colnames(FWRA)
+
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk, Stage)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
 
-watersheds <- c(print(unique(FWRA$W)))
+watersheds <- c(print(unique(FWRA$SYSTEM_SITE)))
 
 for (i in watersheds) {
 
-SARITA_NUMERIC <- dplyr::filter(FWRA, W %in% c(print(i)))
+SARITA_NUMERIC <- dplyr::filter(FWRA, SYSTEM_SITE %in% c(print(i)))
 colnames(SARITA_NUMERIC)
-SARITA_NUMERIC$TR <- as.numeric(SARITA_NUMERIC$TR) 
-SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$TR, ties.method = "min")
+SARITA_NUMERIC$Total_Bio_Risk <- as.numeric(SARITA_NUMERIC$Total_Bio_Risk) 
+SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$Total_Bio_Risk, ties.method = "min")
 
 colnames(SARITA_NUMERIC)
-col_order <- c("W","LF_Name","Rank","TR","CR", "FR")
+col_order <- c("SYSTEM_SITE","Stage","LF_Name","Rank","Total_Bio_Risk","Current_Bio_Risk", "Future_Bio_Risk")
 
 SARITA_NUMERIC <- SARITA_NUMERIC[, col_order]
-SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$TR, decreasing = TRUE),]  
+SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$Total_Bio_Risk, decreasing = TRUE),]  
 SARITA_NUMERIC <- SARITA_NUMERIC %>% 
-  mutate(across(CR:FR, as.character))
+  mutate(across(Current_Bio_Risk:Future_Bio_Risk, as.character))
 
-SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="1"]<-"VL"
-SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="2"]<-"L"
-SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="3"]<-"M"
-SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="4"]<-"H"
-SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="5"]<-"VH"
-SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="1"]<-"VL"
-SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="2"]<-"L"
-SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="3"]<-"M"
-SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="4"]<-"H"
-SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="5"]<-"VH"
+SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="1"]<-"VL"
+SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="2"]<-"L"
+SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="3"]<-"M"
+SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="4"]<-"H"
+SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="5"]<-"VH"
+SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="1"]<-"VL"
+SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="2"]<-"L"
+SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="3"]<-"M"
+SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="4"]<-"H"
+SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="5"]<-"VH"
 
 #mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
 #cols <- colorRampPalette(mycols)
 
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "W")] <- "Watershed"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "TR")] <- "Total Risk"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current Risk"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FR")] <- "Future Risk"
-unique(SARITA_NUMERIC$LF)
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "SYSTEM_SITE")] <- "Watershed"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF Name"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Total_Bio_Risk")] <- "Total Risk"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Current_Bio_Risk")] <- "Current Risk"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Future_Bio_Risk")] <- "Future Risk"
+
+#remove columns Watershed, Total Risk, Rank, and Future Risk
+
 
 SARITA_NUMERIC %>%
     head(68) %>%
     gt() %>%
-gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_Risk_Tables/", print(i),".docx"))
+gtsave(filename = paste0("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Figures/Watershed_Risk_Tables/", print(i),".docx"))
 
 }
-``
+
 ###Reload for tables######
 # time to upload the datas
 ####Data Gaps
 
-FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
+FWRA <- read_excel("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
-FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
-  FWRA<-subset(FWRA, CR!= 1 & CR!= 2 & CR!= 3 & CR!= 4 & CR!= 5 & FR!= 1 & FR!= 2 & FR!= 3 & FR!= 4 & FR!= 5)
+FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
+  FWRA<-subset(FWRA, Current_Bio_Risk!= 1 & Current_Bio_Risk!= 2 & Current_Bio_Risk!= 3 & Current_Bio_Risk!= 4 & Current_Bio_Risk!= 5 & Future_Bio_Risk!= 1 & Future_Bio_Risk!= 2 & Future_Bio_Risk!= 3 & Future_Bio_Risk!= 4 & Future_Bio_Risk!= 5)
 
-FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
 
-watersheds <- c(print(unique(FWRA$W)))
+watersheds <- c(print(unique(FWRA$SYSTEM_SITE)))
 
 for (i in watersheds) {
 
-SARITA_NUMERIC <- dplyr::filter(FWRA, W %in% c(print(i)))
+SARITA_NUMERIC <- dplyr::filter(FWRA, SYSTEM_SITE %in% c(print(i)))
 colnames(SARITA_NUMERIC)
-SARITA_NUMERIC$TR <- as.numeric(SARITA_NUMERIC$TR) 
-SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$TR, ties.method = "min")
+SARITA_NUMERIC$Total_Bio_Risk <- as.numeric(SARITA_NUMERIC$Total_Bio_Risk) 
+SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$Total_Bio_Risk, ties.method = "min")
 
 colnames(SARITA_NUMERIC)
-col_order <- c("W","LF_Name","Rank","TR","CR", "FR")
+col_order <- c("SYSTEM_SITE","LF_Name","Rank","Total_Bio_Risk","Current_Bio_Risk", "Future_Bio_Risk")
 
 SARITA_NUMERIC <- SARITA_NUMERIC[, col_order]
-SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$TR, decreasing = TRUE),]  
+SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$Total_Bio_Risk, decreasing = TRUE),]  
 SARITA_NUMERIC <- SARITA_NUMERIC %>% 
-  mutate(across(CR:FR, as.character))
+  mutate(across(Current_Bio_Risk:Future_Bio_Risk, as.character))
 
-  SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="-1"]<-"HPDG"
-  SARITA_NUMERIC$CR[SARITA_NUMERIC$CR=="0"]<-"LPDG"
-  SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="-1"]<-"HPDG"
-  SARITA_NUMERIC$FR[SARITA_NUMERIC$FR=="0"]<-"LPDG"
+  SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="-1"]<-"HPDG"
+  SARITA_NUMERIC$Current_Bio_Risk[SARITA_NUMERIC$Current_Bio_Risk=="0"]<-"LPDG"
+  SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="-1"]<-"HPDG"
+  SARITA_NUMERIC$Future_Bio_Risk[SARITA_NUMERIC$Future_Bio_Risk=="0"]<-"LPDG"
 
 #mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
 #cols <- colorRampPalette(mycols)
 
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "W")] <- "Watershed"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "TR")] <- "Total Risk"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "CR")] <- "Current and Future Rating"
-colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "FR")] <- "Future Risk"
-unique(SARITA_NUMERIC$LF)
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "SYSTEM_SITE")] <- "Watershed"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "LF_Name")] <- "LF_Name"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Total_Bio_Risk")] <- "Total Risk"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Current_Bio_Risk")] <- "Current and Future Rating"
+colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Future_Bio_Risk")] <- "Future Risk"
+
 
 #remove columns Watershed, Total Risk, Rank, and Future Risk
 SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,3,4,6)]
@@ -296,10 +306,9 @@ SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,3,4,6)]
   SARITA_NUMERIC %>%
     head(68) %>%
     gt() %>%
-    gtsave(filename = paste0("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/", print(i),".docx"))
+gtsave(filename = paste0("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Watershed_DG_Tables/", gsub(" ", "_", print(i)),".docx"))
   
 }
-
 
 
 ####Data Gaps Counts
@@ -308,25 +317,25 @@ FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data
 head(FWRA)
 
 FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
-  FWRA<-subset(FWRA, CR!= 1 & CR!= 2 & CR!= 3 & CR!= 4 & CR!= 5 & FR!= 1 & FR!= 2 & FR!= 3 & FR!= 4 & FR!= 5)
+  FWRA<-subset(FWRA, Current_Bio_Risk!= 1 & Current_Bio_Risk!= 2 & Current_Bio_Risk!= 3 & Current_Bio_Risk!= 4 & Current_Bio_Risk!= 5 & Future_Bio_Risk!= 1 & Future_Bio_Risk!= 2 & Future_Bio_Risk!= 3 & Future_Bio_Risk!= 4 & Future_Bio_Risk!= 5)
 
-FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
 
-watersheds <- c(print(unique(FWRA$W)))
+watersheds <- c(print(unique(FWRA$SYSTEM_SITE)))
 
 #change all 0s to LPDG and -1s to HPDG
-FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
-FWRA$CR[FWRA$CR=="0"]<-"LPDG"
-FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
-FWRA$FR[FWRA$FR=="0"]<-"LPDG"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="0"]<-"LPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="0"]<-"LPDG"
 
 #using dplyr count the number of times each risk value appears in each watershed
 DG <- FWRA %>%
-  group_by(W) %>%
-  count(CR, FR) %>%
+  group_by(SYSTEM_SITE) %>%
+  count(Current_Bio_Risk, Future_Bio_Risk) %>%
   ungroup()
 
 
@@ -342,53 +351,53 @@ FWRA_2022_Analysis/Figures/Watershed_DG_Tables/DG_Table_Breakdown.csv")
 FWRA <- read_excel("/Users/critty/Desktop/Dekstop/GitHub/FWRA_2022_Analysis/Data/FWRA_2021_RESULTS_MASTER.xlsx", sheet = 1)
 head(FWRA)
 
-FWRA <- subset(FWRA, LF != "23" & LF != "24")
+FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
 
-FWRA <- select(FWRA,W,LF,CR,FR)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Number,Current_Bio_Risk,Future_Bio_Risk)
 
-FWRA$CR <- as.character(FWRA$CR)
-FWRA$FR <- as.character(FWRA$FR)
+FWRA$Current_Bio_Risk <- as.character(FWRA$Current_Bio_Risk)
+FWRA$Future_Bio_Risk <- as.character(FWRA$Future_Bio_Risk)
 
-#remove all rows with a 0 or -1 in the CR or FR columns
-FWRA <- subset(FWRA, CR!= 0 & CR!= -1 & FR!= 0 & FR!= -1)
+#remove all rows with a 0 or -1 in the Current_Bio_Risk or Future_Bio_Risk columns
+FWRA <- subset(FWRA, Current_Bio_Risk!= 0 & Current_Bio_Risk!= -1 & Future_Bio_Risk!= 0 & Future_Bio_Risk!= -1)
 
 #change all numeric values to character
-FWRA$CR[FWRA$CR=="1"]<-"VL"
-FWRA$CR[FWRA$CR=="2"]<-"L"
-FWRA$CR[FWRA$CR=="3"]<-"M"
-FWRA$CR[FWRA$CR=="4"]<-"H"
-FWRA$CR[FWRA$CR=="5"]<-"VH"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="1"]<-"VL"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="2"]<-"L"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="3"]<-"M"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="4"]<-"H"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="5"]<-"VH"
 
-FWRA$FR[FWRA$FR=="1"]<-"VL"
-FWRA$FR[FWRA$FR=="2"]<-"L"
-FWRA$FR[FWRA$FR=="3"]<-"M"
-FWRA$FR[FWRA$FR=="4"]<-"H"
-FWRA$FR[FWRA$FR=="5"]<-"VH"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="1"]<-"VL"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="2"]<-"L"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="3"]<-"M"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="4"]<-"H"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="5"]<-"VH"
 
 
 library(dplyr)
 
-unique(FWRA$CR)
-unique(FWRA$FR)
+unique(FWRA$Current_Bio_Risk)
+unique(FWRA$Future_Bio_Risk)
 
 sorted <- FWRA %>%
-mutate(VH = ifelse(CR %in% c("VH"), 1, 0),
-VL = ifelse(CR %in% c("VL"), 1, 0),
-H = ifelse(CR %in% c("H"), 1, 0),
-M = ifelse(CR %in% c("M"), 1, 0),
-L = ifelse(CR %in% c("L"), 1, 0),
-VH_FR = ifelse(FR %in% c("VH"), 1, 0),
-VL_FR = ifelse(FR %in% c("VL"), 1, 0),
-H_FR = ifelse(FR %in% c("H"), 1, 0),
-M_FR = ifelse(FR %in% c("M"), 1, 0),
-L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
-group_by(LF) %>%
+mutate(VH = ifelse(Current_Bio_Risk %in% c("VH"), 1, 0),
+VL = ifelse(Current_Bio_Risk %in% c("VL"), 1, 0),
+H = ifelse(Current_Bio_Risk %in% c("H"), 1, 0),
+M = ifelse(Current_Bio_Risk %in% c("M"), 1, 0),
+L = ifelse(Current_Bio_Risk %in% c("L"), 1, 0),
+VH_FR = ifelse(Future_Bio_Risk %in% c("VH"), 1, 0),
+VL_FR = ifelse(Future_Bio_Risk %in% c("VL"), 1, 0),
+H_FR = ifelse(Future_Bio_Risk %in% c("H"), 1, 0),
+M_FR = ifelse(Future_Bio_Risk %in% c("M"), 1, 0),
+L_FR = ifelse(Future_Bio_Risk %in% c("L"), 1, 0)) %>%
+group_by(LF_Number) %>%
 summarise(VH = sum(VH),VH_FR = sum(VH_FR),
 VL = sum(VL),VL_FR = sum(VL_FR),
 H = sum(H),H_FR = sum(H_FR),
 M = sum(M),M_FR = sum(M_FR),
 L = sum(L),L_FR = sum(L_FR))%>%
-arrange(LF)
+arrange(LF_Number)
 print(sorted, n = Inf)
 
 #remove future columns
@@ -398,7 +407,7 @@ arrange(desc(VH), desc(H), desc(M),desc(L), desc(VL))
 
 #order columns by VH, H, M, L, VL
 current <- current %>%
-  select(LF, VH, H, M, L, VL)
+  select(LF_Number, VH, H, M, L, VL)
 
 print(current)
 
@@ -409,12 +418,12 @@ arrange(desc(VH_FR), desc(H_FR), desc(M_FR),desc(L_FR), desc(VL_FR))
 
 #order columns by VH, H, M, L, VL
 future <- future %>%
-  select(LF, VH_FR, H_FR, M_FR, L_FR, VL_FR)
+  select(LF_Number, VH_FR, H_FR, M_FR, L_FR, VL_FR)
 
 # assign current lf names to a variable
-v1 <- current$LF
+v1 <- current$LF_Number
 # assign future lf names to a variable
-v2 <- future$LF
+v2 <- future$LF_Number
 
 # Set a value for o
 o <- 0.05
@@ -463,53 +472,53 @@ head(FWRA)
 
 FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
 
-FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 
-FWRA$CR <- as.character(FWRA$CR)
-FWRA$FR <- as.character(FWRA$FR)
+FWRA$Current_Bio_Risk <- as.character(FWRA$Current_Bio_Risk)
+FWRA$Future_Bio_Risk <- as.character(FWRA$Future_Bio_Risk)
 
 
 #change all numeric values to character
-FWRA$CR[FWRA$CR=="1"]<-"VL"
-FWRA$CR[FWRA$CR=="2"]<-"L"
-FWRA$CR[FWRA$CR=="3"]<-"M"
-FWRA$CR[FWRA$CR=="4"]<-"H"
-FWRA$CR[FWRA$CR=="5"]<-"VH"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="1"]<-"VL"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="2"]<-"L"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="3"]<-"M"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="4"]<-"H"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="5"]<-"VH"
 
-FWRA$FR[FWRA$FR=="1"]<-"VL"
-FWRA$FR[FWRA$FR=="2"]<-"L"
-FWRA$FR[FWRA$FR=="3"]<-"M"
-FWRA$FR[FWRA$FR=="4"]<-"H"
-FWRA$FR[FWRA$FR=="5"]<-"VH"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="1"]<-"VL"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="2"]<-"L"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="3"]<-"M"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="4"]<-"H"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="5"]<-"VH"
 
-FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
-FWRA$CR[FWRA$CR=="0"]<-"LPDG"
-FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
-FWRA$FR[FWRA$FR=="0"]<-"LPDG"
-unique(FWRA$CR)
-unique(FWRA$FR)
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="0"]<-"LPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="0"]<-"LPDG"
+unique(FWRA$Current_Bio_Risk)
+unique(FWRA$Future_Bio_Risk)
 library(dplyr)
 
-unique(FWRA$CR)
-unique(FWRA$FR)
+unique(FWRA$Current_Bio_Risk)
+unique(FWRA$Future_Bio_Risk)
 
 sorted <- FWRA %>%
-mutate(HPDG = ifelse(CR %in% c("HPDG"), 1, 0),
-LPDG = ifelse(CR %in% c("LPDG"), 1, 0),
-VH = ifelse(CR %in% c("VH"), 1, 0),
-VL = ifelse(CR %in% c("VL"), 1, 0),
-H = ifelse(CR %in% c("H"), 1, 0),
-M = ifelse(CR %in% c("M"), 1, 0),
-L = ifelse(CR %in% c("L"), 1, 0),
-HPDG_FR = ifelse(FR %in% c("HPDG"), 1, 0),
-LPDG_FR = ifelse(FR %in% c("LPDG"), 1, 0),
-VH_FR = ifelse(FR %in% c("VH"), 1, 0),
-VL_FR = ifelse(FR %in% c("VL"), 1, 0),
-H_FR = ifelse(FR %in% c("H"), 1, 0),
-M_FR = ifelse(FR %in% c("M"), 1, 0),
-L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
+mutate(HPDG = ifelse(Current_Bio_Risk %in% c("HPDG"), 1, 0),
+LPDG = ifelse(Current_Bio_Risk %in% c("LPDG"), 1, 0),
+VH = ifelse(Current_Bio_Risk %in% c("VH"), 1, 0),
+VL = ifelse(Current_Bio_Risk %in% c("VL"), 1, 0),
+H = ifelse(Current_Bio_Risk %in% c("H"), 1, 0),
+M = ifelse(Current_Bio_Risk %in% c("M"), 1, 0),
+L = ifelse(Current_Bio_Risk %in% c("L"), 1, 0),
+HPDG_FR = ifelse(Future_Bio_Risk %in% c("HPDG"), 1, 0),
+LPDG_FR = ifelse(Future_Bio_Risk %in% c("LPDG"), 1, 0),
+VH_FR = ifelse(Future_Bio_Risk %in% c("VH"), 1, 0),
+VL_FR = ifelse(Future_Bio_Risk %in% c("VL"), 1, 0),
+H_FR = ifelse(Future_Bio_Risk %in% c("H"), 1, 0),
+M_FR = ifelse(Future_Bio_Risk %in% c("M"), 1, 0),
+L_FR = ifelse(Future_Bio_Risk %in% c("L"), 1, 0)) %>%
 group_by(LF_Name) %>%
 summarise(LPDG_sum = sum(LPDG, LPDG_FR),
 VL_sum = sum(VL, VL_FR),
@@ -530,53 +539,53 @@ head(FWRA)
 
 FWRA <- subset(FWRA, LF_Name != "23" & LF_Name != "24")
 
-FWRA <- select(FWRA,W,LF_Name,TR,CR,FR)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 
-FWRA$CR <- as.character(FWRA$CR)
-FWRA$FR <- as.character(FWRA$FR)
+FWRA$Current_Bio_Risk <- as.character(FWRA$Current_Bio_Risk)
+FWRA$Future_Bio_Risk <- as.character(FWRA$Future_Bio_Risk)
 
 
 #change all numeric values to character
-FWRA$CR[FWRA$CR=="1"]<-"VL"
-FWRA$CR[FWRA$CR=="2"]<-"L"
-FWRA$CR[FWRA$CR=="3"]<-"M"
-FWRA$CR[FWRA$CR=="4"]<-"H"
-FWRA$CR[FWRA$CR=="5"]<-"VH"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="1"]<-"VL"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="2"]<-"L"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="3"]<-"M"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="4"]<-"H"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="5"]<-"VH"
 
-FWRA$FR[FWRA$FR=="1"]<-"VL"
-FWRA$FR[FWRA$FR=="2"]<-"L"
-FWRA$FR[FWRA$FR=="3"]<-"M"
-FWRA$FR[FWRA$FR=="4"]<-"H"
-FWRA$FR[FWRA$FR=="5"]<-"VH"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="1"]<-"VL"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="2"]<-"L"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="3"]<-"M"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="4"]<-"H"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="5"]<-"VH"
 
-FWRA$CR[FWRA$CR=="-1"]<-"HPDG"
-FWRA$CR[FWRA$CR=="0"]<-"LPDG"
-FWRA$FR[FWRA$FR=="-1"]<-"HPDG"
-FWRA$FR[FWRA$FR=="0"]<-"LPDG"
-unique(FWRA$CR)
-unique(FWRA$FR)
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk=="0"]<-"LPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="-1"]<-"HPDG"
+FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="0"]<-"LPDG"
+unique(FWRA$Current_Bio_Risk)
+unique(FWRA$Future_Bio_Risk)
 library(dplyr)
 
-unique(FWRA$CR)
-unique(FWRA$FR)
+unique(FWRA$Current_Bio_Risk)
+unique(FWRA$Future_Bio_Risk)
 
 sorted <- FWRA %>%
-mutate(HPDG = ifelse(CR %in% c("HPDG"), 1, 0),
-LPDG = ifelse(CR %in% c("LPDG"), 1, 0),
-VH = ifelse(CR %in% c("VH"), 1, 0),
-VL = ifelse(CR %in% c("VL"), 1, 0),
-H = ifelse(CR %in% c("H"), 1, 0),
-M = ifelse(CR %in% c("M"), 1, 0),
-L = ifelse(CR %in% c("L"), 1, 0),
-HPDG_FR = ifelse(FR %in% c("HPDG"), 1, 0),
-LPDG_FR = ifelse(FR %in% c("LPDG"), 1, 0),
-VH_FR = ifelse(FR %in% c("VH"), 1, 0),
-VL_FR = ifelse(FR %in% c("VL"), 1, 0),
-H_FR = ifelse(FR %in% c("H"), 1, 0),
-M_FR = ifelse(FR %in% c("M"), 1, 0),
-L_FR = ifelse(FR %in% c("L"), 1, 0)) %>%
+mutate(HPDG = ifelse(Current_Bio_Risk %in% c("HPDG"), 1, 0),
+LPDG = ifelse(Current_Bio_Risk %in% c("LPDG"), 1, 0),
+VH = ifelse(Current_Bio_Risk %in% c("VH"), 1, 0),
+VL = ifelse(Current_Bio_Risk %in% c("VL"), 1, 0),
+H = ifelse(Current_Bio_Risk %in% c("H"), 1, 0),
+M = ifelse(Current_Bio_Risk %in% c("M"), 1, 0),
+L = ifelse(Current_Bio_Risk %in% c("L"), 1, 0),
+HPDG_FR = ifelse(Future_Bio_Risk %in% c("HPDG"), 1, 0),
+LPDG_FR = ifelse(Future_Bio_Risk %in% c("LPDG"), 1, 0),
+VH_FR = ifelse(Future_Bio_Risk %in% c("VH"), 1, 0),
+VL_FR = ifelse(Future_Bio_Risk %in% c("VL"), 1, 0),
+H_FR = ifelse(Future_Bio_Risk %in% c("H"), 1, 0),
+M_FR = ifelse(Future_Bio_Risk %in% c("M"), 1, 0),
+L_FR = ifelse(Future_Bio_Risk %in% c("L"), 1, 0)) %>%
 group_by(LF_Name) %>%
 summarise(LPDG_sum = sum(LPDG, LPDG_FR),
 HPDG_sum = sum(HPDG, HPDG_FR),
