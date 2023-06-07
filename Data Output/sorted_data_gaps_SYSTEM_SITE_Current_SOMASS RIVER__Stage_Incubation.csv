@@ -1,0 +1,13 @@
+"","Stage","LF_Number","LF_Name","total_count","HPDG_total_prop","HPDG_total_count","VH_total_prop","VH_total_count","H_total_prop","H_total_count","M_total_prop","M_total_count","L_total_prop","L_total_count","VL_total_prop","VL_total_count","LPDG_total_prop","LPDG_total_count"
+"1","Incubation",20,"LF20: Mortality or fitness reduction due to redd overspawn",1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"2","Incubation",22,"LF22: Mortality or fitness reduction resulting from frequent and higher peak flows causing redd scour",1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"3","Incubation",26,"LF26: Mortality or fitness reduction due to unfavourable water temperatures",1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"4","Incubation",27,"LF27: Mortality or fitness reduction as a result of low dissolved oxygen",1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"5","Incubation",28,"LF28: Mortality or fitness reduction as a result of poor pH levels",1,1,1,0,0,0,0,0,0,0,0,0,0,0,0
+"6","Incubation",25,"LF25: Mortality or fitness reduction due to lower quality spawning gravel",1,0,0,0,0,0,0,0,0,1,1,0,0,0,0
+"7","Incubation",19,"LF19: Mortality or fitness reduction due to early alevin emergence",1,0,0,0,0,0,0,0,0,0,0,1,1,0,0
+"8","Incubation",16,"LF16: Mortality due to elevated levels of predation of eggs and alevin",1,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+"9","Incubation",17,"LF17: Mortality or fitness reduction due to predation by or presence of invasive species",1,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+"10","Incubation",18,"LF18: Mortality due to redd disturbance by humans",1,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+"11","Incubation",21,"LF21: Mortality or fitness reduction due to dewatered redds at low flows",1,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+"12","Incubation",29,"LF29: Mortality or fitness reduction due to deleterious substances",1,0,0,0,0,0,0,0,0,0,0,0,0,1,1

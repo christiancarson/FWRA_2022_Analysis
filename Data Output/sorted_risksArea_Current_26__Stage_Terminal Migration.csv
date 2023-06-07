@@ -1,0 +1,16 @@
+"","Stage","LF_Number","LF_Name","total_count","VH_total_prop","VH_total_count","H_total_prop","H_total_count","M_total_prop","M_total_count","HPDG_total_prop","HPDG_total_count","L_total_prop","L_total_count","VL_total_prop","VL_total_count","LPDG_total_prop","LPDG_total_count"
+"1","Terminal Migration",6,"LF6: Limited or delayed access due to physical migration barriers and/or lack of safe migration routes (including lack of cover and complexity)",2,0.5,1,0,0,0,0,0,0,0,0,0.5,1,0,0
+"2","Terminal Migration",1,"LF1: Mortality or fitness reduction due to predation from pinnipeds or other aquatic species",2,0,0,0,0,0.5,1,0,0,0,0,0.5,1,0,0
+"3","Terminal Migration",5,"LF5: Mortality or fitness reduction due to competition with invasive species",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"4","Terminal Migration",9,"LF9: Mortality or fitness reduction due to fishing",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"5","Terminal Migration",10,"LF10: Mortality or fitness reduction of wild fish due to competition with hatchery fish or aquaculture escapees for spawning locations or mates",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"6","Terminal Migration",2,"LF2:  Mortality or fitness reduction increased exposure to terrestrial predation",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"7","Terminal Migration",3,"LF3: Mortality or fitness reduction as a result of stress due to anthropogenic activity (non fishing)",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"8","Terminal Migration",7,"LF7: Pre-spawn mortality or fitness reduction due to poor quality of spawning habitat",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"9","Terminal Migration",8,"LF8: Pre-spawn mortality or fitness reduction due to reduced quantity of spawning habitat",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"10","Terminal Migration",11,"LF11: Mortality or fitness reduction due to unfavourable water temperatures",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"11","Terminal Migration",4,"LF4: Mortality or fitness reduction as a result of disease, parasites, or pathogens",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"12","Terminal Migration",12,"LF12: Mortality or fitness reduction as a result of low dissolved oxygen",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"13","Terminal Migration",13,"LF13: Mortality or fitness reduction as a result of poor pH levels",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"14","Terminal Migration",14,"LF14: Mortality or fitness reduction as a result of changes to salinity",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"15","Terminal Migration",15,"LF15: Mortality or fitness reduction due to deleterious substances",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
