@@ -660,7 +660,7 @@ process_filtered_data <- function(filtered_data, risk_column, file_suffix) {
   cat("\nSorted Risks for", file_suffix, ":\n")
   print(sorted_risks)
 
-  write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks", file_suffix, ".csv"))
+  write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
 }
 
 # Get unique values for LF_Number, CU_ACRO, Area, SYSTEM_SITE, and Stage
