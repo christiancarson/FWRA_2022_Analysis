@@ -180,6 +180,19 @@ unique_SMU <- unique(FWRA$SMU)
         filter(SMU == smu)
       process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SMU_Future", smu, sep="_"))
     }
+
+    #Combined the outputs of SMU Current Risk and Future Risk into one table
+    #Read in the SMU Current Risk and Future Risk tables
+    SMU_Current_Risk <- read.csv(paste0(data.output.path, "/sorted_risks_SMU_Current_WVI.csv"))
+    SMU_Future_Risk <- read.csv(paste0(data.output.path, "/sorted_risks_SMU_Future_WVI.csv"))
+
+    #Combine the two tables into one table with the same columns
+    SMU_Current_Future_Risk <- rbind(SMU_Current_Risk, SMU_Future_Risk)
+    
+
+#save the combined table as a csv
+write.csv(SMU_Current_Future_Risk, file = paste0(data.output.path, "/sorted_risks_SMU_Current_Future_WVI.csv"))
+
 # Loop for CU_ACRO current risk
     for (cu_acro in unique_cu_acros) {
       filtered_data <- FWRA %>%
