@@ -143,7 +143,7 @@ longData <- mutate(longData, Total_Bio_Risk = Current_Bio_Risk * Future_Bio_Risk
 mycols <- rev(c("red3","darkorange1","gold1","yellowgreen","forestgreen"))
 cols <- colorRampPalette(mycols)
 myvals <- c(0,6.5,12.5,18.75,25)
-scaled_val <- scales::rescale(myvals, 0:1)
+scaled_val <- c(0, 0.1, 0.3, 0.7, 1)
 set.seed(42)
 myplot <- ggplot(longData,aes(x = Future_Bio_Risk, y = Current_Bio_Risk, fill = Total_Bio_Risk))+ 
   theme_classic()+ 
@@ -263,7 +263,7 @@ head(FWRA)
 FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
   FWRA<-subset(FWRA, Current_Bio_Risk!= 1 & Current_Bio_Risk!= 2 & Current_Bio_Risk!= 3 & Current_Bio_Risk!= 4 & Current_Bio_Risk!= 5 & Future_Bio_Risk!= 1 & Future_Bio_Risk!= 2 & Future_Bio_Risk!= 3 & Future_Bio_Risk!= 4 & Future_Bio_Risk!= 5)
 
-FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk)
+FWRA <- select(FWRA,SYSTEM_SITE,LF_Name,Total_Bio_Risk,Current_Bio_Risk,Future_Bio_Risk,Stage)
 
 FWRA <- subset(FWRA, LF_Name != "LF24: Mortality of eggs due to lack of groundwater upwelling on lakeshore" & LF_Name != "LF23: Mortality of eggs during incubation due to variable lake water levels")
 unique(FWRA$LF_Name)
@@ -278,7 +278,7 @@ SARITA_NUMERIC$Total_Bio_Risk <- as.numeric(SARITA_NUMERIC$Total_Bio_Risk)
 SARITA_NUMERIC$Rank <- rank(-SARITA_NUMERIC$Total_Bio_Risk, ties.method = "min")
 
 colnames(SARITA_NUMERIC)
-col_order <- c("SYSTEM_SITE","LF_Name","Rank","Total_Bio_Risk","Current_Bio_Risk", "Future_Bio_Risk")
+col_order <- c("SYSTEM_SITE","Stage","LF_Name","Rank","Total_Bio_Risk","Current_Bio_Risk", "Future_Bio_Risk")
 
 SARITA_NUMERIC <- SARITA_NUMERIC[, col_order]
 SARITA_NUMERIC <- SARITA_NUMERIC[order(SARITA_NUMERIC$Total_Bio_Risk, decreasing = TRUE),]  
@@ -301,13 +301,13 @@ colnames(SARITA_NUMERIC)[which(names(SARITA_NUMERIC) == "Future_Bio_Risk")] <- "
 
 
 #remove columns Watershed, Total Risk, Rank, and Future Risk
-SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,3,4,6)]
+SARITA_NUMERIC <- SARITA_NUMERIC[, -c(1,4,5,7)]
 
-  SARITA_NUMERIC %>%
+SARITA_NUMERIC %>%
     head(68) %>%
     gt() %>%
-gtsave(filename = paste0("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Watershed_DG_Tables/", gsub(" ", "_", print(i)),".docx"))
-  
+gtsave(filename = paste0("/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Figures/Watershed_DG_Tables/", print(i),".docx"))
+
 }
 
 
@@ -345,6 +345,8 @@ DG <- FWRA %>%
 #Save the table
 write.csv(FWRA, file = "/Users/critty/Desktop/Dekstop/GitHub/
 FWRA_2022_Analysis/Figures/Watershed_DG_Tables/DG_Table_Breakdown.csv")
+
+
 
 
 #################### Risk Table ####################
