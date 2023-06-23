@@ -168,7 +168,10 @@ unique_lf_numbers <- unique(FWRA$LF_Number)
 unique_cu_acros <- unique(FWRA$CU_ACRO)
 unique_areas <- unique(FWRA$Area)
 unique_system_sites <- unique(FWRA$SYSTEM_SITE)
-unique_SMU <- unique(FWRA$SMU)
+unique_SMU_WVI <- unique(FWRA$FAZ_ACRO)
+
+
+
 
 # Loop for SMU current risk
     for (smu in unique_SMU) {
@@ -324,7 +327,7 @@ process_filtered_data <- function(filtered_data, risk_column, file_suffix) {
       process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SYSTEM_SITE_Future", system_site, sep="_"))
     }
 
-#####CU and DU Data Gaps#####
+#####CU and SMU Data Gaps#####
 FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER.xlsx", sep = "/"), sheet = 1)
 
 FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
@@ -357,7 +360,7 @@ FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk=="-1"]<-"HPDG"
 ####Risk Ranked Across All LFs and Spatial Scales####
 library(tidyr)
 library(dplyr)
-
+FWRA$SMU <- "WVI"
 # Add 0s to missing values in current risk column and future risk column
 FWRA$Current_Bio_Risk[FWRA$Current_Bio_Risk==""]<-"0"
 FWRA$Future_Bio_Risk[FWRA$Future_Bio_Risk==""]<-"0"
@@ -421,6 +424,23 @@ unique_lf_numbers <- unique(FWRA$LF_Number)
 unique_cu_acros <- unique(FWRA$CU_ACRO)
 unique_areas <- unique(FWRA$Area)
 unique_system_sites <- unique(FWRA$SYSTEM_SITE)
+unique_SMU <- unique(FWRA$FAZ_ACRO)
+
+
+# Loop for SMU current data gaps
+for (smu in unique_SMU) {
+  filtered_data <- FWRA %>%
+    filter(SMU == smu)
+  process_filtered_data(filtered_data, "Current_Bio_Risk", paste("SMU_Current", smu, sep="_"))
+}
+
+# Loop for SMU future data gaps
+for (smu in unique_SMU) {
+  filtered_data <- FWRA %>%
+    filter(SMU == smu)
+  process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SMU_Future", smu, sep="_"))
+}
+
 
 # Loop for CU_ACRO current risk
     for (cu_acro in unique_cu_acros) {
