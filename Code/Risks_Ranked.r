@@ -23,7 +23,6 @@ library(vtable)
 library(ggrepel)
 
 #####Setup#####
-
 #--------------any libraries needed are loaded and displayed below--------------
 #
 library(dplyr)
@@ -70,6 +69,10 @@ data.path <- paste(wd, "/", "Data", sep = "")
 FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER.xlsx", sep = "/"), sheet = 1)
 
 FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
+
+#Remove all LFs in the estuary from Muriel Lake, Upper Kennedy, Sand River, Clayoquot River (these sub-basins don't have an estuary)
+
+
 
 #add "LF" before LF number
 FWRA$LF <- paste("LF", FWRA$LF_Number, sep = "")
