@@ -1,0 +1,69 @@
+"","LF_Number","LF_Name","total_count","HPDG_total_prop","HPDG_total_count","VH_total_prop","VH_total_count","H_total_prop","H_total_count","M_total_prop","M_total_count","L_total_prop","L_total_count","VL_total_prop","VL_total_count","LPDG_total_prop","LPDG_total_count"
+"1",39,"LF39: Mortality or fitness reduction from stranding in rearing habitat",2,1,2,0,0,0,0,0,0,0,0,0,0,0,0
+"2",58,"LF58: Mortality or fitness reduction due to reduction in quality of vegetation habitat",2,0.5,1,0,0,0.5,1,0,0,0,0,0,0,0,0
+"3",59,"LF59: Mortality or fitness reduction due to reduction in quantity of vegetation habitat",2,0.5,1,0,0,0.5,1,0,0,0,0,0,0,0,0
+"4",68,"LF68: Mortality or fitness reduction due to a reduction in natural (wild) genetic influence. This is measured by the stray rate (pHOSstray) into the system, or by the frequency and magnitude of direct transplanting.",2,0.5,1,0,0,0.5,1,0,0,0,0,0,0,0,0
+"5",19,"LF19: Mortality or fitness reduction due to early alevin emergence",2,0.5,1,0,0,0,0,0,0,0,0,0,0,0.5,1
+"6",25,"LF25: Mortality or fitness reduction due to lower quality spawning gravel",2,0.5,1,0,0,0,0,0,0,0,0,0,0,0.5,1
+"7",22,"LF22: Mortality or fitness reduction resulting from frequent and higher peak flows causing redd scour",2,0,0,1,2,0,0,0,0,0,0,0,0,0,0
+"8",67,"LF67: Mortality or fitness reduction due changes in biological characteristics such as fecundity, maturation rate, sex ratios, size at age, etc",2,0,0,1,2,0,0,0,0,0,0,0,0,0,0
+"9",6,"LF6: Limited or delayed access due to physical migration barriers and/or lack of safe migration routes (including lack of cover and complexity)",2,0,0,0.5,1,0,0,0,0,0.5,1,0,0,0,0
+"10",21,"LF21: Mortality or fitness reduction due to dewatered redds at low flows",2,0,0,0,0,1,2,0,0,0,0,0,0,0,0
+"11",1,"LF1: Mortality or fitness reduction due to predation from pinnipeds or other aquatic species",2,0,0,0,0,0.5,1,0,0,0.5,1,0,0,0,0
+"12",36,"LF36: Mortality or fitness reduction as a result of decreased quality of rearing habitat",2,0,0,0,0,0,0,1,2,0,0,0,0,0,0
+"13",37,"LF37: Mortality or fitness reduction as a result of decreased quantity of rearing habitat",2,0,0,0,0,0,0,1,2,0,0,0,0,0,0
+"14",38,"LF38: Mortality or fitness reduction as a result of decreased access to or quality of floodplain habitat",2,0,0,0,0,0,0,1,2,0,0,0,0,0,0
+"15",40,"LF40: Mortality or fitness reduction due to frequent and higher peak flows causing flushing",2,0,0,0,0,0,0,1,2,0,0,0,0,0,0
+"16",50,"LF50: Mortality or fitness reduction as a result of stress due to anthropogenic activity",2,0,0,0,0,0,0,0.5,1,0,0,0.5,1,0,0
+"17",56,"LF56: Mortality or fitness reduction due to reduction in quality channel habitat",2,0,0,0,0,0,0,0.5,1,0,0,0,0,0.5,1
+"18",57,"LF57: Mortality or fitness reduction due to reduction in quantity channel habitat",2,0,0,0,0,0,0,0.5,1,0,0,0,0,0.5,1
+"19",5,"LF5: Mortality or fitness reduction due to competition with invasive species",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"20",9,"LF9: Mortality or fitness reduction due to fishing",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"21",10,"LF10: Mortality or fitness reduction of wild fish due to competition with hatchery fish or aquaculture escapees for spawning locations or mates",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"22",53,"LF53: Mortality or fitness reduction due to increased frequency and magnitude of algal blooms",2,0,0,0,0,0,0,0,0,0.5,1,0.5,1,0,0
+"23",65,"LF65: Mortality or fitness reduction due to deleterious substances",2,0,0,0,0,0,0,0,0,0.5,1,0,0,0.5,1
+"24",2,"LF2:  Mortality or fitness reduction increased exposure to terrestrial predation",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"25",3,"LF3: Mortality or fitness reduction as a result of stress due to anthropogenic activity (non fishing)",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"26",7,"LF7: Pre-spawn mortality or fitness reduction due to poor quality of spawning habitat",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"27",8,"LF8: Pre-spawn mortality or fitness reduction due to reduced quantity of spawning habitat",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"28",11,"LF11: Mortality or fitness reduction due to unfavourable water temperatures",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"29",16,"LF16: Mortality due to elevated levels of predation of eggs and alevin",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"30",17,"LF17: Mortality or fitness reduction due to predation by or presence of invasive species",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"31",18,"LF18: Mortality due to redd disturbance by humans",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"32",20,"LF20: Mortality or fitness reduction due to redd overspawn",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"33",32,"LF32: Mortality or fitness reduction as a result of stress due to anthropogenic activity",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"34",33,"LF33: Mortality or fitness reduction as a result of disease, parasites, or pathogens",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"35",34,"LF34: Mortality or fitness reduction due to competition from invasive species",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"36",41,"LF41: Mortality or fitness reduction as a result of competition with hatchery fry",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"37",42,"LF42: Mortality or fitness reduction due to unfavourable water temperatures",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"38",47,"LF47: Mortality or fitness reduction due to elevated predation",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"39",48,"LF48: Mortality or fitness reduction due to predation by invasive species",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"40",51,"LF51: Mortality or fitness reduction as a result of disease, parasites, or pathogens",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"41",61,"LF61: Mortality or fitness reduction due to unfavourable water temperatures",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"42",69,"LF69: Mortality or fitness reduction as a result of rearing in a hatchery environment leading to maladaptation to the wild environment. This is measured in a reduction in PNI.",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"43",70,"LF70: Mortality or fitness reduction due to negative effects of small population size - including inbreeding depression and gene flow",2,0,0,0,0,0,0,0,0,0,0,1,2,0,0
+"44",54,"LF54: Mortality or fitness reduction due to reduction in quality of beach habitat",2,0,0,0,0,0,0,0,0,0,0,0.5,1,0.5,1
+"45",55,"LF55: Mortality or fitness reduction due to loss in quantity of beach habitat loss",2,0,0,0,0,0,0,0,0,0,0,0.5,1,0.5,1
+"46",4,"LF4: Mortality or fitness reduction as a result of disease, parasites, or pathogens",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"47",12,"LF12: Mortality or fitness reduction as a result of low dissolved oxygen",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"48",13,"LF13: Mortality or fitness reduction as a result of poor pH levels",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"49",14,"LF14: Mortality or fitness reduction as a result of changes to salinity",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"50",15,"LF15: Mortality or fitness reduction due to deleterious substances",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"51",26,"LF26: Mortality or fitness reduction due to unfavourable water temperatures",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"52",27,"LF27: Mortality or fitness reduction as a result of low dissolved oxygen",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"53",28,"LF28: Mortality or fitness reduction as a result of poor pH levels",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"54",29,"LF29: Mortality or fitness reduction due to deleterious substances",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"55",30,"LF30: Mortality or fitness reduction as a result of elevated predation",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"56",31,"LF31: Mortality or fitness reduction due to elevated predation as a result of enhancement of predatory fish species",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"57",35,"LF35: Mortality or fitness reduction as a result of lack of access to appropriate food",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"58",43,"LF43: Mortality or fitness reduction as a result of low dissolved oxygen",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"59",44,"LF44: Mortality or fitness reduction as a result of poor pH levels",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"60",45,"LF45: Mortality or fitness reduction as a result of deleterious substances",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"61",46,"LF46: Mortality or fitness reduction due to ingestion of microplastics in lake environments",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"62",49,"LF49: Mortality or fitness reduction due to inter- and intra-specific competition",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"63",52,"LF52: Mortality or fitness reduction as a result of lack of access to appropriate food",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"64",60,"LF60: Mortality or fitness reduction due to competition with hatchery fish",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"65",62,"LF62: Mortality or fitness reduction as a result of low dissolved oxygen",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"66",63,"LF63: Mortality or fitness reduction as a result of poor pH levels",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"67",64,"LF64: Mortality or fitness reduction due to increases in salinity",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2
+"68",66,"LF66: Mortality or fitness reduction due to ingestion of microplastics",2,0,0,0,0,0,0,0,0,0,0,0,0,1,2

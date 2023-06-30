@@ -33,7 +33,7 @@ library(kableExtra)
 
 library(httpgd)
 hgd()
-
+hgd_browse()
 wd <- getwd()  # working directory
 
 folders <- c("Data Output", "Figures")
@@ -66,12 +66,11 @@ figures.path <- paste(wd, "/", folders[2], sep = "")
 data.path <- paste(wd, "/", "Data", sep = "")
 
 ####################CU and DU Risk Tables ####################
-FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER.xlsx", sep = "/"), sheet = 1)
+FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER_Original.xlsx", sep = "/"), sheet = 1)
 
 FWRA <- subset(FWRA, LF_Number != "23" & LF_Number != "24")
 
 #Remove all LFs in the estuary from Muriel Lake, Upper Kennedy, Sand River, Clayoquot River (these sub-basins don't have an estuary)
-
 
 
 #add "LF" before LF number
@@ -184,18 +183,6 @@ unique_SMU <- unique(FWRA$SMU)
       process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SMU_Future", smu, sep="_"))
     }
 
-    #Combined the outputs of SMU Current Risk and Future Risk into one table
-    #Read in the SMU Current Risk and Future Risk tables
-    SMU_Current_Risk <- read.csv(paste0(data.output.path, "/sorted_risks_SMU_Current_WVI.csv"))
-    SMU_Future_Risk <- read.csv(paste0(data.output.path, "/sorted_risks_SMU_Future_WVI.csv"))
-
-    #Combine the two tables into one table with the same columns
-    SMU_Current_Future_Risk <- rbind(SMU_Current_Risk, SMU_Future_Risk)
-    
-
-#save the combined table as a csv
-write.csv(SMU_Current_Future_Risk, file = paste0(data.output.path, "/sorted_risks_SMU_Current_Future_WVI.csv"))
-
 # Loop for CU_ACRO current risk
     for (cu_acro in unique_cu_acros) {
       filtered_data <- FWRA %>%
@@ -223,6 +210,95 @@ write.csv(SMU_Current_Future_Risk, file = paste0(data.output.path, "/sorted_risk
         filter(Area == area)
       process_filtered_data(filtered_data, "Future_Bio_Risk", paste("Area_Future", area, sep="_"))
     }
+
+# Load the necessary libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+library(readr)
+
+# Get the data output path
+data.output.path <- "/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data Output"
+
+# Define a function for processing the data and creating CSV files
+process_filtered_data <- function(data, bio_risk, file_suffix) {
+  # Assume that your process_filtered_data function looks something like this:
+  sorted_risks <- data %>%
+    group_by(LF_Number) %>%
+    summarise(Risk = mean(get(bio_risk)))
+  
+  # Print the sorted risks data frame to the console
+  cat("\nSorted Risks for", file_suffix, ":\n")
+  print(sorted_risks)
+
+  # Save the sorted risks data frame to a CSV file
+  write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
+}
+
+# Get unique values for SMU, CU_ACRO, and Area
+unique_values <- list(SMU = unique(FWRA$SMU),
+                      CU_ACRO = unique(FWRA$CU_ACRO),
+                      Area = unique(FWRA$Area))
+
+# Loop for each unique value and corresponding risk
+for (param in names(unique_values)) {
+  for (val in unique_values[[param]]) {
+    for (risk in c("Current_Bio_Risk", "Future_Bio_Risk")) {
+      # Filter the data and process it
+      filtered_data <- FWRA %>% filter(get(param) == val)
+      process_filtered_data(data = filtered_data, bio_risk = risk, file_suffix = paste(param, risk, val, sep = "_"))
+    }
+  }
+}
+
+# Function to process data files and generate plots
+process_data_files <- function(current_file_name, future_file_name, data_output_path) {
+  
+  # Read the CSV files if they are saved in previous steps
+  current_data <- read.csv(file = paste0(data_output_path, "/", current_file_name))
+  future_data <- read.csv(file = paste0(data_output_path, "/", future_file_name))
+
+  # Add a new column to each dataset to indicate if it's current or future data
+  current_data$Time_Period <- 'Current'
+  future_data$Time_Period <- 'Future'
+
+  # Process the data, calculate the rank, and reshape the data
+  # ....
+
+  # Create the plot and save it to a file
+    plot <- ggplot(data_top, aes(x = reorder(LF_Number, Rank), y = Proportion, fill = Risk_Level)) +
+    geom_bar(stat = "identity", position = "stack") +
+    theme_minimal() +
+    labs(x = NULL, y = "Proportion of Each Risk") +
+    scale_fill_manual(values = c("VH" = "red3", "H" = "darkorange1", "M" = "gold1", "HPDG" = "grey30", "LPDG" = "grey70", "L" = "yellowgreen", "VL" = "forestgreen")) +
+    coord_flip() +
+    facet_wrap(~ Time_Period, ncol = 2, scales = "free", strip.position = "top") +
+    theme(
+      axis.text.y = element_text(size = 15, face = "bold", margin = margin(r = 0.1, l = 0.1, unit = "cm")),
+      axis.text.x = element_blank(),  # Remove x-axis labels
+      axis.title = element_blank(),  # Remove axis titles
+      legend.text = element_text(size = 14),
+      legend.title = element_text(size = 16, face = "bold"),
+      strip.text = element_text(size = 18, face = "bold")
+    )
+  ggsave(filename = paste0(data_output_path, "/", "plot_", file_suffix, ".png"), plot = plot)
+}
+
+# Loop over each unique value and corresponding risk again
+for (param in names(unique_values)) {
+  for (val in unique_values[[param]]) {
+    for (risk in c("Current_Bio_Risk", "Future_Bio_Risk")) {
+      # Process data and generate plots
+      process_data_files(
+        current_file_name = paste("sorted_risks_", param, "Current_Bio_Risk", val, ".csv", sep = "_"),
+        future_file_name = paste("sorted_risks_", param, "Future_Bio_Risk", val, ".csv", sep = "_"),
+        data_output_path = data.output.path
+      )
+    }
+  }
+}
+
 
 ###### System Site Risk Tables######
 FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER.xlsx", sep = "/"), sheet = 1)
@@ -449,6 +525,67 @@ unique_system_sites <- unique(FWRA$SYSTEM_SITE)
         filter(Area == area)
       process_filtered_data(filtered_data, "Future_Bio_Risk", paste("Area_Future", area, sep="_"))
     }
+
+# Load the necessary libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+
+# Define a function that takes two arguments, the names of the current and future CSV files
+process_data_files <- function(current_file_name, future_file_name) {
+  # Read the CSV files if they are saved in previous steps
+  current_data <- read.csv(file = paste0(data.output.path, "/", current_file_name))
+  future_data <- read.csv(file = paste0(data.output.path, "/", future_file_name))
+
+  # Add a new column to each dataset to indicate if it's current or future data
+  current_data$Time_Period <- 'Current'
+  future_data$Time_Period <- 'Future'
+
+  # Combine the current and future data into one dataframe
+  combined_data <- rbind(current_data, future_data)
+
+  # Reshape the data into a long format suitable for plotting
+  data_long <- combined_data %>% 
+    select(LF_Number, Time_Period, VH_total_prop, H_total_prop, M_total_prop, L_total_prop, VL_total_prop, LPDG_total_prop, HPDG_total_prop) %>%
+    gather(key = "Risk_Level", value = "Proportion", -LF_Number, -Time_Period)
+
+  # Assign weights according to risk category importance
+  weights <- c(VH = 7, H = 6, M = 5, HPDG = 4, L = 3, VL = 2, LPDG = 1)
+
+  # Calculate the rank based on weighted sum of proportions
+  combined_data <- combined_data %>% 
+    mutate(Rank = VH_total_prop * weights['VH'] +
+                  H_total_prop * weights['H'] +
+                  M_total_prop * weights['M'] +
+                  HPDG_total_prop * weights['HPDG'] +
+                  L_total_prop * weights['L'] +
+                  VL_total_prop * weights['VL'] +
+                  LPDG_total_prop * weights['LPDG'])
+
+  # Merge the ranking with the data_long dataframe
+  data_long <- merge(data_long, combined_data[, c("LF_Number", "Time_Period", "Rank")], by = c("LF_Number", "Time_Period"))
+
+  # [The rest of your data processing and plotting code goes here]
+
+  # Return the final plot
+  return(plot)
+}
+
+# Define the group names
+groups <- c("Area", "CU", "SMU")
+
+# Apply the function for each group
+for (group in groups) {
+  current_file_name <- paste0("sorted_risks_", group, "_Current_WVI.csv")
+  future_file_name <- paste0("sorted_risks_", group, "_Future_WVI.csv")
+  
+  plot <- process_data_files(current_file_name, future_file_name)
+  
+  # Display the plot
+  print(plot)
+}
+
 
 ####SYSTEM_SITE DATA GAPS####
 FWRA <- read_excel(paste(data.path, "FWRA_2021_RESULTS_MASTER.xlsx", sep = "/"), sheet = 1)
