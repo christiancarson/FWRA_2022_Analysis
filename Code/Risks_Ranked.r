@@ -161,145 +161,200 @@ process_filtered_data <- function(filtered_data, risk_column, file_suffix) {
   write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
 }
 
-
 # Get unique values for LF_Number, CU_ACRO, Area, and SYSTEM_SITE
 unique_lf_numbers <- unique(FWRA$LF_Number)
 unique_cu_acros <- unique(FWRA$CU_ACRO)
 unique_areas <- unique(FWRA$Area)
 unique_system_sites <- unique(FWRA$SYSTEM_SITE)
-unique_SMU_WVI <- unique(FWRA$FAZ_ACRO)
+unique_SMU <- unique(FWRA$FAZ_ACRO)
 
-
-
-
-# Loop for SMU current risk
-    for (smu in unique_SMU) {
-      filtered_data <- FWRA %>%
-        filter(SMU == smu)
-      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("SMU_Current", smu, sep="_"))
-    }
-
-# Loop for SMU future risk
-    for (smu in unique_SMU) {
-      filtered_data <- FWRA %>%
-        filter(SMU == smu)
-      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("SMU_Future", smu, sep="_"))
-    }
-
-# Loop for CU_ACRO current risk
-    for (cu_acro in unique_cu_acros) {
-      filtered_data <- FWRA %>%
-        filter(CU_ACRO == cu_acro)
-      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("CU_ACRO_Current", cu_acro, sep="_"))
-    }
-
-# Loop for CU_ACRO future risk
-    for (cu_acro in unique_cu_acros) {
-      filtered_data <- FWRA %>%
-        filter(CU_ACRO == cu_acro)
-      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("CU_ACRO_Future", cu_acro, sep="_"))
-    }
-
-# Loop for Area current risk
-    for (area in unique_areas) {
-      filtered_data <- FWRA %>%
-        filter(Area == area)
-      process_filtered_data(filtered_data, "Current_Bio_Risk", paste("Area_Current", area, sep="_"))
-    }
-
-# Loop for Area future risk
-    for (area in unique_areas) {
-      filtered_data <- FWRA %>%
-        filter(Area == area)
-      process_filtered_data(filtered_data, "Future_Bio_Risk", paste("Area_Future", area, sep="_"))
-    }
 
 # Load the necessary libraries
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(stringr)
-library(readr)
 
-# Get the data output path
-data.output.path <- "/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data Output"
-
-# Define a function for processing the data and creating CSV files
-process_filtered_data <- function(data, bio_risk, file_suffix) {
-  # Assume that your process_filtered_data function looks something like this:
-  sorted_risks <- data %>%
-    group_by(LF_Number) %>%
-    summarise(Risk = mean(get(bio_risk)))
-  
-  # Print the sorted risks data frame to the console
-  cat("\nSorted Risks for", file_suffix, ":\n")
-  print(sorted_risks)
-
-  # Save the sorted risks data frame to a CSV file
-  write.csv(sorted_risks, file = paste0(data.output.path, "/sorted_risks_", file_suffix, ".csv"))
-}
-
-# Get unique values for SMU, CU_ACRO, and Area
-unique_values <- list(SMU = unique(FWRA$SMU),
-                      CU_ACRO = unique(FWRA$CU_ACRO),
-                      Area = unique(FWRA$Area))
-
-# Loop for each unique value and corresponding risk
-for (param in names(unique_values)) {
-  for (val in unique_values[[param]]) {
-    for (risk in c("Current_Bio_Risk", "Future_Bio_Risk")) {
-      # Filter the data and process it
-      filtered_data <- FWRA %>% filter(get(param) == val)
-      process_filtered_data(data = filtered_data, bio_risk = risk, file_suffix = paste(param, risk, val, sep = "_"))
-    }
-  }
-}
-
-# Function to process data files and generate plots
-process_data_files <- function(current_file_name, future_file_name, data_output_path) {
+process_data_files <- function(current_file_name, future_file_name) {
+  # Get the data output path
+  data.output.path <- "/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data Output"
   
   # Read the CSV files if they are saved in previous steps
-  current_data <- read.csv(file = paste0(data_output_path, "/", current_file_name))
-  future_data <- read.csv(file = paste0(data_output_path, "/", future_file_name))
+  current_data <- read.csv(file = paste0(data.output.path, "/", current_file_name))
+  future_data <- read.csv(file = paste0(data.output.path, "/", future_file_name))
+
+  # Additional data processing, combining, reshaping, and plotting as before...
+  # ...
 
   # Add a new column to each dataset to indicate if it's current or future data
   current_data$Time_Period <- 'Current'
   future_data$Time_Period <- 'Future'
 
-  # Process the data, calculate the rank, and reshape the data
-  # ....
+  # Combine the current and future data into one dataframe
+  combined_data <- rbind(current_data, future_data)
 
-  # Create the plot and save it to a file
-    plot <- ggplot(data_top, aes(x = reorder(LF_Number, Rank), y = Proportion, fill = Risk_Level)) +
-    geom_bar(stat = "identity", position = "stack") +
-    theme_minimal() +
-    labs(x = NULL, y = "Proportion of Each Risk") +
-    scale_fill_manual(values = c("VH" = "red3", "H" = "darkorange1", "M" = "gold1", "HPDG" = "grey30", "LPDG" = "grey70", "L" = "yellowgreen", "VL" = "forestgreen")) +
-    coord_flip() +
-    facet_wrap(~ Time_Period, ncol = 2, scales = "free", strip.position = "top") +
-    theme(
-      axis.text.y = element_text(size = 15, face = "bold", margin = margin(r = 0.1, l = 0.1, unit = "cm")),
-      axis.text.x = element_blank(),  # Remove x-axis labels
-      axis.title = element_blank(),  # Remove axis titles
-      legend.text = element_text(size = 14),
-      legend.title = element_text(size = 16, face = "bold"),
-      strip.text = element_text(size = 18, face = "bold")
-    )
-  ggsave(filename = paste0(data_output_path, "/", "plot_", file_suffix, ".png"), plot = plot)
+  # Reshape the data into a long format suitable for plotting
+  data_long <- combined_data %>% 
+    select(LF_Number, Time_Period, VH_total_prop, H_total_prop, M_total_prop, L_total_prop, VL_total_prop, LPDG_total_prop, HPDG_total_prop) %>%
+    gather(key = "Risk_Level", value = "Proportion", -LF_Number, -Time_Period)
+
+  # Assign weights according to risk category importance
+  weights <- c(VH = 7, H = 6, M = 5, HPDG = 4, L = 3, VL = 2, LPDG = 1)
+
+  # Calculate the rank based on weighted sum of proportions
+  combined_data <- combined_data %>% 
+    mutate(Rank = VH_total_prop * weights['VH'] +
+                  H_total_prop * weights['H'] +
+                  M_total_prop * weights['M'] +
+                  HPDG_total_prop * weights['HPDG'] +
+                  L_total_prop * weights['L'] +
+                  VL_total_prop * weights['VL'] +
+                  LPDG_total_prop * weights['LPDG'])
+
+  # Merge the ranking with the data_long dataframe
+  data_long <- merge(data_long, combined_data[, c("LF_Number", "Time_Period", "Rank")], by = c("LF_Number", "Time_Period"))
+
+  data_long <- data_long %>%
+    mutate(Risk_Level = case_when(
+      Risk_Level == "VH_total_prop" ~ "VH",
+      Risk_Level == "H_total_prop" ~ "H",
+      Risk_Level == "M_total_prop" ~ "M",
+      Risk_Level == "L_total_prop" ~ "L",
+      Risk_Level == "VL_total_prop" ~ "VL",
+      Risk_Level == "LPDG_total_prop" ~ "LPDG",
+      Risk_Level == "HPDG_total_prop" ~ "HPDG",
+      TRUE ~ Risk_Level  # leaves all other values unchanged
+    ))
+
+  # Turn "Risk_Level" into a factor and specify levels
+  data_long$Risk_Level <- factor(data_long$Risk_Level, levels = c("VH", "H", "M", "HPDG", "LPDG", "L", "VL"))
+
+  # Calculate the maximum rank for each LF across time periods
+  max_rank <- data_long %>%
+    group_by(LF_Number) %>%
+    summarise(Max_Rank = max(Rank)) %>%
+    arrange(desc(Max_Rank))
+
+  # Get the names of the top 10 LFs
+  top_LFs <- head(max_rank$LF_Number, 10)
+
+  # Filter the data to include only these LFs
+  data_top <- data_long %>% filter(LF_Number %in% top_LFs)
+
+  # Wrap the LF names to a certain width
+  data_top$LF_Number <- str_wrap(data_top$LF_Number, width = 15)
+
+  # Create the plot with this subset of the data
+plot <- ggplot(data_top, aes(x = reorder(LF_Number, Rank), y = Proportion, fill = Risk_Level)) +
+  geom_bar(stat = "identity", position = "stack") +
+  theme_minimal() +
+  labs(x = NULL, y = "Proportion of Each Risk") +
+  scale_fill_manual(values = c("VH" = "red3", "H" = "darkorange1", "M" = "gold1", "HPDG" = "grey30", "LPDG" = "grey70", "L" = "yellowgreen", "VL" = "forestgreen")) +
+  coord_flip() +
+  facet_wrap(~ Time_Period, ncol = 2, scales = "free", strip.position = "top") +
+  theme(
+    axis.text.y = element_text(size = 15, face = "bold", margin = margin(r = 0.1, l = 0.1, unit = "cm")),
+    axis.text.x = element_blank(),  # Remove x-axis labels
+    axis.title = element_blank(),  # Remove axis titles
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 16, face = "bold"),
+    strip.text = element_text(size = 18, face = "bold")
+  )
+
+
+  # Save the plot
+  ggsave(filename = paste0(data.output.path, "/plots/", "plot_", current_file_name, ".png"), plot = plot, width = 10, height = 8)
+
+  # Return the final plot
+  return(plot)
+}
+# Get unique values for LF_Number, CU_ACRO, Area, and SYSTEM_SITE
+unique_lf_numbers <- unique(FWRA$LF_Number)
+unique_cu_acros <- unique(FWRA$CU_ACRO)
+unique_areas <- unique(FWRA$Area)
+unique_system_sites <- unique(FWRA$SYSTEM_SITE)
+unique_SMU <- unique(FWRA$SMU)
+
+data.output.path <- "/Users/critty/Desktop/Base/GitHub/FWRA_2022_Analysis/Data Output" # Ensure this path is correct
+
+# Loop for SMU
+for (smu in unique_SMU) {
+  # current risk
+  filtered_data_current <- FWRA %>%
+    filter(SMU == smu)
+  file_suffix_current <- paste("SMU_Current", smu, sep="_")
+  process_filtered_data(filtered_data_current, "Current_Bio_Risk", file_suffix_current)
+  
+  # future risk
+  filtered_data_future <- FWRA %>%
+    filter(SMU == smu)
+  file_suffix_future <- paste("SMU_Future", smu, sep="_")
+  process_filtered_data(filtered_data_future, "Future_Bio_Risk", file_suffix_future)
+  
+  # generate the plot for the current SMU
+  current_file_name <- paste0("sorted_risks_", file_suffix_current, ".csv")
+  future_file_name <- paste0("sorted_risks_", file_suffix_future, ".csv")
+  plot <- process_data_files(current_file_name = current_file_name, future_file_name = future_file_name)
 }
 
-# Loop over each unique value and corresponding risk again
-for (param in names(unique_values)) {
-  for (val in unique_values[[param]]) {
-    for (risk in c("Current_Bio_Risk", "Future_Bio_Risk")) {
-      # Process data and generate plots
-      process_data_files(
-        current_file_name = paste("sorted_risks_", param, "Current_Bio_Risk", val, ".csv", sep = "_"),
-        future_file_name = paste("sorted_risks_", param, "Future_Bio_Risk", val, ".csv", sep = "_"),
-        data_output_path = data.output.path
-      )
-    }
-  }
+# Loop for CU_ACRO
+for (cu_acro in unique_cu_acros) {
+  # current risk
+  filtered_data_current <- FWRA %>%
+    filter(CU_ACRO == cu_acro)
+  file_suffix_current <- paste("CU_ACRO_Current", cu_acro, sep="_")
+  process_filtered_data(filtered_data_current, "Current_Bio_Risk", file_suffix_current)
+  
+  # future risk
+  filtered_data_future <- FWRA %>%
+    filter(CU_ACRO == cu_acro)
+  file_suffix_future <- paste("CU_ACRO_Future", cu_acro, sep="_")
+  process_filtered_data(filtered_data_future, "Future_Bio_Risk", file_suffix_future)
+  
+  # generate the plot for the current CU_ACRO
+  current_file_name <- paste0("sorted_risks_", file_suffix_current, ".csv")
+  future_file_name <- paste0("sorted_risks_", file_suffix_future, ".csv")
+  plot <- process_data_files(current_file_name = current_file_name, future_file_name = future_file_name)
+}
+
+# Loop for Area
+for (area in unique_areas) {
+  # current risk
+  filtered_data_current <- FWRA %>%
+    filter(Area == area)
+  file_suffix_current <- paste("Area_Current", area, sep="_")
+  process_filtered_data(filtered_data_current, "Current_Bio_Risk", file_suffix_current)
+  
+  # future risk
+  filtered_data_future <- FWRA %>%
+    filter(Area == area)
+  file_suffix_future <- paste("Area_Future", area, sep="_")
+  process_filtered_data(filtered_data_future, "Future_Bio_Risk", file_suffix_future)
+  
+  # generate the plot for the current Area
+  current_file_name <- paste0("sorted_risks_", file_suffix_current, ".csv")
+  future_file_name <- paste0("sorted_risks_", file_suffix_future, ".csv")
+  plot <- process_data_files(current_file_name = current_file_name, future_file_name = future_file_name)
+}
+
+# Loop for SYSTEM_SITE
+for (system_site in unique_system_sites) {
+  # current risk
+  filtered_data_current <- FWRA %>%
+    filter(SYSTEM_SITE == system_site)
+  file_suffix_current <- paste("SYSTEM_SITE_Current", system_site, sep="_")
+  process_filtered_data(filtered_data_current, "Current_Bio_Risk", file_suffix_current)
+  
+  # future risk
+  filtered_data_future <- FWRA %>%
+    filter(SYSTEM_SITE == system_site)
+  file_suffix_future <- paste("SYSTEM_SITE_Future", system_site, sep="_")
+  process_filtered_data(filtered_data_future, "Future_Bio_Risk", file_suffix_future)
+  
+  # generate the plot for the current SYSTEM_SITE
+  current_file_name <- paste0("sorted_risks_", file_suffix_current, ".csv")
+  future_file_name <- paste0("sorted_risks_", file_suffix_future, ".csv")
+  plot <- process_data_files(current_file_name = current_file_name, future_file_name = future_file_name)
 }
 
 
